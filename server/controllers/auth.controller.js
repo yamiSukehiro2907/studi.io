@@ -1,6 +1,8 @@
 const User = require("../models/user.model.js");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 const {
   generateAccessToken,
   generateRefreshToken,
@@ -73,11 +75,52 @@ const login = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 3600000,
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 604800000,
+    });
     return res.status(200).json({
       userId: user._id,
       email: user.email,
-      accessToken: accessToken,
-      refreshToken: refreshToken,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const logOut = async (req, res) => {
+  try {
+    let user;
+    if (req.cookies) {
+      const token = req.cookies.accessToken;
+      if (token) {
+        res.clearCookie("accessToken");
+        if (req.cookies.refreshToken) res.clearCookie("refreshToken");
+        jwt.verify(
+          token,
+          process.env.ACCESS_TOKEN_SECRET,
+          async (err, decoded) => {
+            if (decoded) {
+              let id = decoded.id;
+              user = await User.findById(id);
+              if (user) {
+                user.refreshToken = "";
+                await user.save();
+              }
+            }
+          }
+        );
+      }
+    }
+    return res.status(200).json({
+      message: "User logged out successfully",
     });
   } catch (err) {
     console.log(err)
@@ -85,4 +128,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { signUp, login };
+module.exports = { signUp, login, logOut };
