@@ -1,6 +1,10 @@
 const User = require("../models/user.model.js");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../config/token.js");
 
 const signUp = async (req, res) => {
   try {
@@ -41,7 +45,7 @@ const signUp = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email && !password) {
+    if (!email || !password) {
       return res
         .status(400)
         .json({ message: "Email and password fields are required" });
@@ -54,18 +58,31 @@ const login = async (req, res) => {
         .status(400)
         .json({ message: "Password should be at least 6 characters long" });
     }
-    const user = await User.find({ email: email });
+    const user = await User.findOne({ email: email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const passwordMatched = bcrypt.compare(password, user.password);
+    const passwordMatched = await bcrypt.compare(password, user.password);
     if (!passwordMatched) {
       return res.status(401).json({ message: "Password is incorrect" });
     }
-    
+
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    return res.status(200).json({
+      userId: user._id,
+      email: user.email,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    });
   } catch (err) {
+    console.log(err)
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-module.exports = { signUp };
+module.exports = { signUp, login };
