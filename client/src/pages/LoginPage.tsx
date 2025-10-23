@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchCurrentUser } from "@/api/user";
 import { setUserData } from "@/redux/slices/userSlice";
+import { AxiosError } from "axios";
 
 export default function LoginPage() {
   const [loginData, setLoginData] = useState({ identifier: "", password: "" });
@@ -45,11 +46,18 @@ export default function LoginPage() {
       setTimeout(() => {
         navigate("/", { replace: true });
       }, 100);
-    } catch (error) {
+    } catch (error: any) {
+      if (error instanceof AxiosError) {
+        if (
+          error.response?.status === 409 &&
+          error.response?.data?.message === "Please verify your email first"
+        ) {
+          navigate("/verify-email");
+        }
+      }
       console.error("Login error:", error);
     }
   };
-
   const features = [
     { text: "Dynamic Shared Whiteboards", icon: Lightbulb },
     { text: "Real-time Collaborative Chat", icon: MessageSquare },

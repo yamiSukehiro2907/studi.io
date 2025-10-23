@@ -51,6 +51,7 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
+      console.log(error)
       const status = error.response.status;
 
       switch (status) {

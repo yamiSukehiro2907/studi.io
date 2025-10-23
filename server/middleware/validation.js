@@ -18,12 +18,11 @@ const validate = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    // if (!user.isVerified) {
-    //   return res
-    //     .status(409)
-    //     .json({ message: "Please verify your email first" });
-    // }
+    if (!user.isVerified) {
+      return res
+        .status(409)
+        .json({ message: "Please verify your email first" });
+    }
     req.user = user;
     next();
   });

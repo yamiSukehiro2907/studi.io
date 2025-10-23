@@ -43,7 +43,9 @@ const verifyOTP = async (req, res) => {
     await user.save();
     await OTP.deleteMany({ email });
     return res.status(200).json({ message: "Email verified successfully" });
-  } catch (err) {}
+  } catch (err) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 const forgotPasswordOtp = async (req, res) => {

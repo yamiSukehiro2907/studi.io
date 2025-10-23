@@ -4,8 +4,8 @@ const bcrypt = require("bcrypt");
 
 const updateUser = async (req, res) => {
   try {
-    const { name, username, bio } = req.body;
-    if (!name && !username && !bio && !req.file) {
+    const { name, email, username, bio } = req.body;
+    if (!name && !username && !bio && !req.file && !email) {
       return res
         .status(400)
         .json({ message: "At least one field is required to update" });
@@ -17,9 +17,22 @@ const updateUser = async (req, res) => {
         username: username,
         _id: { $ne: user._id },
       });
-      if (usernameExists)
+      if (usernameExists) {
         return res.status(409).json({ message: "Username is already in use" });
+      }
       user.username = username;
+    }
+
+    if (email) {
+      const emailExists = await User.findOne({
+        email: email,
+        _id: { $ne: user._id },
+      });
+      if (emailExists) {
+        return res.status(409).json({ message: "Email is already in use" });
+      }
+      user.email = email;
+      user.isVerified = false;
     }
     if (name) user.name = name;
     if (bio) user.bio = bio;
@@ -35,13 +48,10 @@ const updateUser = async (req, res) => {
     }
 
     await user.save();
-    return res.status(200).json({
-      name: user.name,
-      email: user.email,
-      username: user.username,
-      bio: user.bio,
-      profileImage: user.profileImage,
-    });
+    let updatedUser = await User.findById(req.user._id).select(
+      "-password -refreshToken"
+    );
+    return res.status(200).json(updatedUser);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Internal server error" });
@@ -61,7 +71,7 @@ const getProfile = async (req, res) => {
 const changePassword = async (req, res) => {
   try {
     const { email, password } = req.body;
-    let user = await User.findOne({email: email});
+    let user = await User.findOne({ email: email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
