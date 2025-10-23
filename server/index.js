@@ -13,6 +13,8 @@ app.use("/auth", require("./routers/auth.route.js"));
 
 app.use("/user", require("./routers/user.route.js"));
 
+app.use('/otp' , require('./routers/otp.route.js'))
+
 app.listen(PORT, async () => {
   await connectMongoDB();
   console.log(`Server is running at ${PORT}`);
