@@ -1,26 +1,35 @@
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 
-const dir = path.join(__dirname, "..", "public");
-
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, dir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const extension = path.extname(file.originalname);
-    cb(null, file.fieldname + "-" + uniqueSuffix + extension);
-  },
-});
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,
   limits: { fileSize: 1024 * 1024 * 5 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      // Images
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+
+      // Documents
+      "application/pdf",
+      "text/plain",
+      "application/msword", // .doc
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+
+      // Maybe small videos/audio
+      "video/mp4",
+      "audio/mpeg",
+    ];
+
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("This file type is not allowed in the chat."), false);
+    }
+  },
 });
+
 module.exports = upload;

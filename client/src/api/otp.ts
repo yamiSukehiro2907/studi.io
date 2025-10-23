@@ -27,17 +27,3 @@ export const verifyOTP = async (
   }
 };
 
-export const changePassword = async (
-  email: string,
-  password: string
-): Promise<void> => {
-  try {
-    await api.post("/user/change-password", {
-      email: email,
-      password: password,
-    });
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};

@@ -1,18 +1,36 @@
 // SettingsPage.tsx
+import { logOut } from "@/api/auth";
 import { AccountModal } from "@/components/AccountModal";
 import { AppearanceModal } from "@/components/AppearanceModal";
 import { NotificationsModal } from "@/components/NotificationsModal";
 import { PrivacyModal } from "@/components/PrivacyModal";
 import { SecurityModal } from "@/components/SecurityModal";
+import { clearUserData } from "@/redux/slices/userSlice";
+import { persistor } from "@/redux/store";
 import { X, User, Lock, Bell, Shield, Palette, LogOut } from "lucide-react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState<string>("account");
   const navigate = useNavigate();
 
-  const handleLogoutClick = () => {
+  const dispatch = useDispatch();
+  const handleLogoutClick = async () => {
+    try {
+      await logOut();
+
+      dispatch(clearUserData());
+
+      await persistor.purge();
+
+      localStorage.clear();
+
+      navigate("/welcome", { replace: true });
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   const renderContent = () => {

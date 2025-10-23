@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Users, Mail, Lock, KeySquare, Eye, EyeOff } from "lucide-react";
-import { changePassword, sendEmailOTPVerification, verifyOTP } from "@/api/otp";
+import {sendEmailOTPVerification, verifyOTP } from "@/api/otp";
+import { changePassword } from "@/api/user";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");

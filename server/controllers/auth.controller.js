@@ -73,7 +73,6 @@ const login = async (req, res) => {
     }
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
-    console.log("Passed");
     user.refreshToken = refreshToken;
     await user.save();
     res.cookie("accessToken", accessToken, {

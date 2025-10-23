@@ -22,3 +22,33 @@ export const updateUser = async (formData: FormData): Promise<any> => {
     throw error;
   }
 };
+
+export const changePassword = async (
+  email: string,
+  password: string
+): Promise<void> => {
+  try {
+    await api.post("/user/change-password", {
+      email: email,
+      password: password,
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const changePassword2 = async (
+  currentPassword: string,
+  newPassword: string
+): Promise<void> => {
+  try {
+    await api.post("/user/change-password-with-current", {
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
