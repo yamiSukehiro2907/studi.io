@@ -6,7 +6,7 @@ const { createUsername } = require("../constants/username.create.js");
 const {
   generateAccessToken,
   generateRefreshToken,
-} = require("../config/token.js");
+} = require("../constants/token.js");
 
 const signUp = async (req, res) => {
   try {
