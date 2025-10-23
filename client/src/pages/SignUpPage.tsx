@@ -10,9 +10,12 @@ import {
   MessageSquare,
   LayoutDashboard,
 } from "lucide-react";
-import image from "../assets/study-collabaration.png"
+import image from "../assets/study-collabaration.png";
+import { signUp } from "@/api/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function SignUpPage() {
+  const navigate = useNavigate();
   const [signupData, setSignupData] = useState({
     name: "",
     email: "",
@@ -21,9 +24,10 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log("Signup data:", signupData);
+    await signUp(signupData);
+    navigate("/login");
   };
 
   const features = [

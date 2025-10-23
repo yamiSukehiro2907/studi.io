@@ -9,14 +9,45 @@ import {
   MessageSquare,
   LayoutDashboard,
 } from "lucide-react";
-import image from "../assets/study-collabaration.png"
+import image from "../assets/study-collabaration.png";
+import { signIn } from "@/api/auth";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { fetchCurrentUser } from "@/api/user";
+import { setUserData } from "@/redux/slices/userSlice";
+
 export default function LoginPage() {
   const [loginData, setLoginData] = useState({ identifier: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login data:", loginData);
+    if (!loginData.identifier || !loginData.password) {
+      return;
+    }
+    try {
+      await signIn({
+        identifier: loginData.identifier,
+        password: loginData.password,
+      });
+
+      const response = await fetchCurrentUser();
+
+      dispatch(setUserData(response));
+
+      setLoginData({
+        identifier: "",
+        password: "",
+      });
+
+      setTimeout(() => {
+        navigate("/", { replace: true });
+      }, 100);
+    } catch (error) {
+      console.error("Login error:", error);
+    }
   };
 
   const features = [
@@ -99,12 +130,12 @@ export default function LoginPage() {
                   </button>
                 </div>
                 <div className="mt-2 flex justify-end">
-                  <a
-                    href="#"
+                  <Link
+                    to="/forgot-password"
                     className="text-emerald-500 font-semibold hover:underline text-xs"
                   >
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
               </div>
 

@@ -19,7 +19,7 @@ const sendEmailVerificationOTP = async (req, res) => {
     const otp = generateOTP();
     await OTP.create({ email: email, otp: otp });
     await sendOTPEmailVerification(email, otp);
-    return res.status(200).json({message: "Otp sent successfully"})
+    return res.status(200).json({ message: "Otp sent successfully" });
   } catch (err) {
     return res.status(500).json({ message: "Internal server error" });
   }
@@ -60,7 +60,7 @@ const forgotPasswordOtp = async (req, res) => {
     const otp = generateOTP();
     await OTP.create({ email: email, otp: otp });
     await sendOTPForgotPassword(email, otp);
-    return res.status(200).json({message: "Otp sent successfully"})
+    return res.status(200).json({ message: "Otp sent successfully" });
   } catch (err) {
     return res.status(500).json({ message: "Internal server error" });
   }
