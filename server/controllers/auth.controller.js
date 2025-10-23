@@ -2,7 +2,7 @@ const User = require("../models/user.model.js");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const { createUsername } = require("../constants/username.create.js");
 const {
   generateAccessToken,
   generateRefreshToken,
@@ -36,6 +36,7 @@ const signUp = async (req, res) => {
       name: name,
       email: email,
       password: hashedPassword,
+      username: await createUsername(6),
     });
     return res.status(201).json({ message: "User created successfully" });
   } catch (err) {
@@ -46,21 +47,23 @@ const signUp = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
+    const { identifier, password } = req.body;
+    if (!identifier || !password) {
       return res
         .status(400)
         .json({ message: "Email and password fields are required" });
     }
-    if (!validator.isEmail(email)) {
-      return res.status(400).json({ message: "Email has invalid format" });
+    let user;
+    if (validator.isEmail(identifier)) {
+      user = await User.findOne({ email: identifier });
+    } else {
+      user = await User.findOne({ username: identifier });
     }
     if (password.length < 6) {
       return res
         .status(400)
         .json({ message: "Password should be at least 6 characters long" });
     }
-    const user = await User.findOne({ email: email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -88,6 +91,7 @@ const login = async (req, res) => {
     return res.status(200).json({
       userId: user._id,
       email: user.email,
+      username: user.username,
     });
   } catch (err) {
     console.log(err);
@@ -123,7 +127,7 @@ const logOut = async (req, res) => {
       message: "User logged out successfully",
     });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
