@@ -102,17 +102,15 @@ export const SecurityModal = () => {
           <input
             type={showCurrentPassword ? "text" : "password"}
             placeholder="Enter current password"
-            className="input input-bordered w-full pr-12"
+            className="w-full pl-4 pr-12 h-12 bg-slate-700/50 border-2 border-slate-600 focus:border-emerald-500 focus:bg-slate-700 transition-all duration-200 rounded-xl text-white placeholder-gray-500 outline-none"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
-            disabled={isLoading}
             required
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-base-content/60 hover:text-base-content transition-colors"
+            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-emerald-500 transition-colors"
             onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-            tabIndex={-1}
           >
             {showCurrentPassword ? (
               <EyeOff className="w-5 h-5" />
@@ -133,7 +131,7 @@ export const SecurityModal = () => {
           <input
             type={showNewPassword ? "text" : "password"}
             placeholder="Enter new password"
-            className="input input-bordered w-full pr-12"
+            className="w-full pl-4 pr-12 h-12 bg-slate-700/50 border-2 border-slate-600 focus:border-emerald-500 focus:bg-slate-700 transition-all duration-200 rounded-xl text-white placeholder-gray-500 outline-none"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             disabled={isLoading}
@@ -142,9 +140,8 @@ export const SecurityModal = () => {
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-base-content/60 hover:text-base-content transition-colors"
+            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-emerald-500 transition-colors"
             onClick={() => setShowNewPassword(!showNewPassword)}
-            tabIndex={-1}
           >
             {showNewPassword ? (
               <EyeOff className="w-5 h-5" />
@@ -154,7 +151,7 @@ export const SecurityModal = () => {
           </button>
         </div>
         <label className="label">
-          <span className="label-text-alt text-base-content/60">
+          <span className="label-text-alt pt-2 text-base-content/60">
             Must be at least 6 characters long
           </span>
         </label>
@@ -170,7 +167,7 @@ export const SecurityModal = () => {
           <input
             type={showConfirmPassword ? "text" : "password"}
             placeholder="Confirm new password"
-            className="input input-bordered w-full pr-12"
+            className="w-full pl-4 pr-12 h-12 bg-slate-700/50 border-2 border-slate-600 focus:border-emerald-500 focus:bg-slate-700 transition-all duration-200 rounded-xl text-white placeholder-gray-500 outline-none"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             disabled={isLoading}
@@ -178,7 +175,7 @@ export const SecurityModal = () => {
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-base-content/60 hover:text-base-content transition-colors"
+            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-emerald-500 transition-colors"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             tabIndex={-1}
           >
@@ -193,12 +190,12 @@ export const SecurityModal = () => {
 
       <button
         type="submit"
-        className="btn btn-primary px-8"
+        className="btn py-3 px-6 h-auto rounded-xl shadow-md font-semibold text-base transition-all duration-200 hover:shadow-lg hover:scale-[1.02] bg-blue-500 hover:bg-blue-600 text-white border-blue-500"
         disabled={isLoading}
       >
         {isLoading ? (
           <>
-            <span className="loading loading-spinner"></span>
+            <span className="loading loading-spinner loading-sm mr-2"></span>{" "}
             Changing...
           </>
         ) : (

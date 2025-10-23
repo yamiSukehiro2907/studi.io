@@ -27,6 +27,7 @@ export const AccountModal = () => {
 
     if (file.size > 2 * 1024 * 1024) {
       setError("File size should be less than 2MB");
+      toast.error(error);
       return;
     }
 
@@ -139,7 +140,7 @@ export const AccountModal = () => {
             <input
               type="text"
               placeholder="Enter your full name"
-              className="input input-bordered input-lg focus:input-primary transition-all duration-200"
+              className="w-full pl-4 pr-12 h-12 rounded-xl "
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={loading}
@@ -152,7 +153,7 @@ export const AccountModal = () => {
             <input
               type="text"
               placeholder="Enter username"
-              className="input input-bordered input-lg focus:input-primary transition-all duration-200"
+              className="w-full pl-4 pr-12 h-12 rounded-xl "
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               disabled={loading}
@@ -171,7 +172,7 @@ export const AccountModal = () => {
             <input
               type="email"
               placeholder="Enter email"
-              className="input input-bordered input-lg focus:input-primary transition-all duration-200 flex-1"
+              className="w-full pl-4 pr-12 h-12 rounded-xl "
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
@@ -233,7 +234,7 @@ export const AccountModal = () => {
           <div className="mt-2">
             <textarea
               placeholder="Tell us about yourself..."
-              className="textarea textarea-bordered textarea-lg focus:textarea-primary h-10 resize-none transition-all duration-200 leading-relaxed"
+              className="pt-2 pl-4 pr-12 textarea textarea-bordered textarea-lg focus:textarea-primary h-5 resize-none transition-all duration-200 leading-relaxed rounded-xl"
               value={bio}
               onChange={(e) => setBio(e.target.value.slice(0, 50))}
               disabled={loading}
@@ -246,7 +247,7 @@ export const AccountModal = () => {
       {/* Save Button */}
       <div className="flex justify-end pt-6">
         <button
-          className="btn btn-primary btn-lg gap-2 shadow-lg hover:shadow-xl transition-all duration-300"
+          className="btn py-3 px-6 h-auto rounded-xl shadow-md font-semibold text-base transition-all duration-200 hover:shadow-lg hover:scale-[1.02] bg-blue-500 hover:bg-blue-600 text-white border-blue-500"
           onClick={handleSaveChanges}
           disabled={loading}
         >
