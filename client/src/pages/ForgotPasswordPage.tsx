@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Users, Mail, Lock, KeySquare, Eye, EyeOff } from "lucide-react";
-import {sendEmailOTPVerification, verifyOTP } from "@/api/otp";
+import { sendEmailOTPVerification, verifyOTP } from "@/api/otp";
 import { changePassword } from "@/api/user";
+import toast from "react-hot-toast";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -23,13 +24,18 @@ export default function ForgotPasswordPage() {
     setError(null);
     setMessage(null);
 
+    const loadingToastId = toast.loading("Sending OTP...");
+
     try {
       await sendEmailOTPVerification(email);
       setMessage(`An OTP has been sent to ${email}. Please check your inbox.`);
       setStep(2);
+      toast.success("OTP sent successfully!", { id: loadingToastId });
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.message || "Failed to send OTP.");
+      const errorMsg = err.response?.data?.message || "Failed to send OTP.";
+      setError(errorMsg);
+      toast.error(errorMsg, { id: loadingToastId });
     } finally {
       setIsLoading(false);
     }
@@ -41,13 +47,18 @@ export default function ForgotPasswordPage() {
     setError(null);
     setMessage(null);
 
+    const loadingToastId = toast.loading("Verifying OTP...");
+
     try {
       await verifyOTP(email, otp);
       setMessage("Email verified successfully!");
       setStep(3);
+      toast.success("OTP verified!", { id: loadingToastId });
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.message || "Invalid or expired OTP.");
+      const errorMsg = err.response?.data?.message || "Invalid or expired OTP.";
+      setError(errorMsg);
+      toast.error(errorMsg, { id: loadingToastId });
     } finally {
       setIsLoading(false);
     }
@@ -62,22 +73,30 @@ export default function ForgotPasswordPage() {
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match!");
       setIsLoading(false);
+      toast.error("Passwords do not match!"); 
       return;
     }
 
     if (newPassword.length < 6) {
       setError("Password must be at least 6 characters long!");
       setIsLoading(false);
+      toast.error("Password must be at least 6 characters long!"); 
       return;
     }
+
+    const loadingToastId = toast.loading("Resetting password...");
 
     try {
       await changePassword(email, newPassword);
       setMessage("Password reset successfully! Redirecting to login...");
+      toast.success("Password reset successfully!", { id: loadingToastId });
       navigate("/login");
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.message || "Failed to reset password.");
+      const errorMsg =
+        err.response?.data?.message || "Failed to reset password.";
+      setError(errorMsg);
+      toast.error(errorMsg, { id: loadingToastId });
     } finally {
       setIsLoading(false);
     }

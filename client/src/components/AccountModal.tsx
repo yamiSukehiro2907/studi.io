@@ -5,6 +5,7 @@ import type { RootState } from "@/redux/store";
 import { updateUser } from "@/api/user";
 import { setUserData } from "@/redux/slices/userSlice";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export const AccountModal = () => {
   const { userData } = useSelector((state: RootState) => state.user);
@@ -38,6 +39,8 @@ export const AccountModal = () => {
   };
 
   const handleSaveChanges = async () => {
+    const loadingToastId = toast.loading("Saving changes...");
+
     try {
       setLoading(true);
       setError(null);
@@ -56,9 +59,13 @@ export const AccountModal = () => {
 
       setImagePreview(null);
       setImageFile(null);
+      toast.success("Profile updated successfully!", { id: loadingToastId });
     } catch (err) {
       console.error("Failed to update user:", err);
-      setError(err instanceof Error ? err.message : "Failed to update profile");
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to update profile";
+      setError(errorMessage);
+      toast.error(errorMessage, { id: loadingToastId });
     } finally {
       setLoading(false);
     }

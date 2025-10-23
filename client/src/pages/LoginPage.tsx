@@ -16,6 +16,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { fetchCurrentUser } from "@/api/user";
 import { setUserData } from "@/redux/slices/userSlice";
 import { AxiosError } from "axios";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const [loginData, setLoginData] = useState({ identifier: "", password: "" });
@@ -26,8 +27,11 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!loginData.identifier || !loginData.password) {
+      toast.error("Please enter email/username and password.");
       return;
     }
+    const loadingToastId = toast.loading("Signing in...");
+
     try {
       await signIn({
         identifier: loginData.identifier,
@@ -38,6 +42,8 @@ export default function LoginPage() {
 
       dispatch(setUserData(response));
 
+      toast.success("Logged in successfully!", { id: loadingToastId });
+
       setLoginData({
         identifier: "",
         password: "",
@@ -47,14 +53,22 @@ export default function LoginPage() {
         navigate("/", { replace: true });
       }, 100);
     } catch (error: any) {
+      let errorMessage = "Login failed. Please check your credentials.";
+
       if (error instanceof AxiosError) {
         if (
           error.response?.status === 409 &&
           error.response?.data?.message === "Please verify your email first"
         ) {
+          errorMessage = "Please verify your email first.";
+          toast.error(errorMessage, { id: loadingToastId });
           navigate("/verify-email");
+          return;
+        } else if (error.response?.data?.message) {
+          errorMessage = error.response.data.message;
         }
       }
+      toast.error(errorMessage, { id: loadingToastId });
       console.error("Login error:", error);
     }
   };

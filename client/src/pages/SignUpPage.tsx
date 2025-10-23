@@ -13,6 +13,8 @@ import {
 import image from "../assets/study-collabaration.png";
 import { signUp } from "@/api/auth";
 import { useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
+import toast from "react-hot-toast";
 
 export default function SignUpPage() {
   const navigate = useNavigate();
@@ -24,10 +26,34 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signUp(signupData);
-    navigate("/login");
+
+    if (!signupData.name || !signupData.email || !signupData.password) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+    if (signupData.password.length < 6) {
+      toast.error("Password must be at least 6 characters long.");
+      return;
+    }
+    const loadingToastId = toast.loading("Creating account...");
+
+    try {
+      await signUp(signupData);
+      toast.success("Account created successfully! Please log in.", {
+        id: loadingToastId,
+      });
+
+      navigate("/login");
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      let errorMessage = "Signup failed. Please try again.";
+      if (error instanceof AxiosError && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+      toast.error(errorMessage, { id: loadingToastId });
+    }
   };
 
   const features = [

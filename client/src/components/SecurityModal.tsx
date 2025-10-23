@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { changePassword2 } from "@/api/user";
+import toast from "react-hot-toast";
 
 export const SecurityModal = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -38,20 +39,24 @@ export const SecurityModal = () => {
 
     setIsLoading(true);
 
+    const loadingToastId = toast.loading("Changing password...");
+
     try {
       await changePassword2(currentPassword, newPassword);
 
-      // toast.success("Password changed successfully!");
+      toast.success("Password changed successfully!", { id: loadingToastId });
 
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (err: any) {
-      setError(
+      const errorMessage =
         err.response?.data?.message ||
-          "Failed to change password. Please check your current password."
-      );
-      // toast.error("Failed to change password");
+        "Failed to change password. Please check your current password.";
+
+      setError(errorMessage);
+
+      toast.error(errorMessage, { id: loadingToastId });
     } finally {
       setIsLoading(false);
     }

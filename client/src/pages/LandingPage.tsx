@@ -5,7 +5,7 @@ import {
   LayoutDashboard,
   ArrowRight,
 } from "lucide-react";
-import heroImage from "../assets/study-collabaration.png"; 
+import heroImage from "../assets/study-collabaration.png";
 import { FeatureCard } from "@/components/FeatureCard";
 import { StepCard } from "@/components/StepCard";
 

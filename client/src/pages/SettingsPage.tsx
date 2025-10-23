@@ -9,6 +9,7 @@ import { clearUserData } from "@/redux/slices/userSlice";
 import { persistor } from "@/redux/store";
 import { X, User, Lock, Bell, Shield, Palette, LogOut } from "lucide-react";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -18,6 +19,8 @@ export const SettingsPage = () => {
 
   const dispatch = useDispatch();
   const handleLogoutClick = async () => {
+    const loadingToastId = toast.loading("Logging out...");
+
     try {
       await logOut();
 
@@ -26,10 +29,12 @@ export const SettingsPage = () => {
       await persistor.purge();
 
       localStorage.clear();
+      toast.success("Logged out successfully!", { id: loadingToastId });
 
       navigate("/welcome", { replace: true });
     } catch (error) {
       console.error("Logout error:", error);
+      toast.error("Logout failed. Please try again.", { id: loadingToastId });
     }
   };
 

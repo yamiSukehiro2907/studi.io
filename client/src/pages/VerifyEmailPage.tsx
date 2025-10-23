@@ -4,6 +4,7 @@ import { Users, Mail, KeySquare, CheckCircle } from "lucide-react";
 import { sendEmailOTPVerification, verifyOTP } from "@/api/otp";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
+import toast from "react-hot-toast";
 
 export default function VerifyEmailPage() {
   const { userData } = useSelector((state: RootState) => state.user);
@@ -32,6 +33,8 @@ export default function VerifyEmailPage() {
     setError(null);
     setMessage(null);
 
+    const loadingToastId = toast.loading("Sending verification code...");
+
     try {
       await sendEmailOTPVerification(email);
       setMessage(
@@ -39,11 +42,15 @@ export default function VerifyEmailPage() {
       );
       setStep(2);
       setResendCountdown(60);
+
+      toast.success("Verification code sent!", { id: loadingToastId });
     } catch (err: any) {
       console.error(err);
-      setError(
-        err.response?.data?.message || "Failed to send verification code."
-      );
+      const errorMsg =
+        err.response?.data?.message || "Failed to send verification code.";
+      setError(errorMsg);
+
+      toast.error(errorMsg, { id: loadingToastId });
     } finally {
       setIsLoading(false);
     }
@@ -55,20 +62,25 @@ export default function VerifyEmailPage() {
     setError(null);
     setMessage(null);
 
+    const loadingToastId = toast.loading("Verifying code...");
+
     try {
       await verifyOTP(email, otp);
       setMessage("Email verified successfully!");
       setStep(3);
 
-      // Redirect after 2 seconds
+      toast.success("Email verified successfully!", { id: loadingToastId });
+
       setTimeout(() => {
         navigate("/");
       }, 2000);
     } catch (err: any) {
       console.error(err);
-      setError(
-        err.response?.data?.message || "Invalid or expired verification code."
-      );
+      const errorMsg =
+        err.response?.data?.message || "Invalid or expired verification code.";
+      setError(errorMsg);
+
+      toast.error(errorMsg, { id: loadingToastId });
     } finally {
       setIsLoading(false);
     }
@@ -79,15 +91,21 @@ export default function VerifyEmailPage() {
     setError(null);
     setMessage(null);
 
+    const loadingToastId = toast.loading("Resending verification code...");
+
     try {
       await sendEmailOTPVerification(email);
       setMessage("Verification code resent successfully!");
       setResendCountdown(60);
+
+      toast.success("Verification code resent!", { id: loadingToastId });
     } catch (err: any) {
       console.error(err);
-      setError(
-        err.response?.data?.message || "Failed to resend verification code."
-      );
+      const errorMsg =
+        err.response?.data?.message || "Failed to resend verification code.";
+      setError(errorMsg);
+
+      toast.error(errorMsg, { id: loadingToastId });
     } finally {
       setIsLoading(false);
     }
