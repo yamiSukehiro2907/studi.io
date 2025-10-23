@@ -12,7 +12,7 @@ const updateUser = async (req, res) => {
     }
     let user = req.user;
     if (!user) return res.status(404).json({ message: "User not found" });
-    if (username) {
+    if (username && user.username !== username) {
       const usernameExists = await User.findOne({
         username: username,
         _id: { $ne: user._id },
@@ -23,7 +23,7 @@ const updateUser = async (req, res) => {
       user.username = username;
     }
 
-    if (email) {
+    if (email && user.email !== email) {
       const emailExists = await User.findOne({
         email: email,
         _id: { $ne: user._id },
@@ -34,8 +34,8 @@ const updateUser = async (req, res) => {
       user.email = email;
       user.isVerified = false;
     }
-    if (name) user.name = name;
-    if (bio) user.bio = bio;
+    if (name && user.name !== name) user.name = name;
+    if (bio && user.bio !== bio) user.bio = bio;
     if (req.file) {
       try {
         user.profileImage = await uploadprofileImageCloudinary(req.file.path);
