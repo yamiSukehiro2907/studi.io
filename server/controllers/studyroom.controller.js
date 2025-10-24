@@ -12,13 +12,19 @@ const createStudyRoom = async (req, res) => {
     const newRoomData = {
       name: name.trim(),
       owner: userId,
-      members: [userId],
+      members: [
+        {
+          user: userId,
+          idAdmin: true,
+        },
+      ],
       description: description ? description.trim() : undefined,
     };
 
     const studyRoom = await StudyRoom.create(newRoomData);
 
     await studyRoom.populate("owner", "name profileImage");
+    await studyRoom.populate("members.user", "name profileImage");
 
     return res.status(201).json({
       message: "Room successfully created",
@@ -33,10 +39,13 @@ const createStudyRoom = async (req, res) => {
 const getAllRooms = async (req, res) => {
   try {
     const userId = req.user._id;
-    const rooms = await StudyRoom.find({ members: userId })
-      .populate("owner", "name profileImage")
-      .sort({ createdAt: -1 });
 
+    const rooms = await StudyRoom.find({
+      "members.user": userId,
+    })
+      .populate("owner", "name profileImage")
+      .populate("members.user", "name profileImage")
+      .sort({ createdAt: -1 });
     return res.status(200).json(rooms);
   } catch (error) {
     console.log("Error fetching rooms:", error);

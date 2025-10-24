@@ -4,7 +4,7 @@ const cors = require("cors");
 const { Server } = require("socket.io");
 const cookieParser = require("cookie-parser");
 const connectMongoDB = require("./config/mongoDB.config.js");
-const setupSocketHandlers = require("./socket/socketHandler.js");
+const setupSocketHandlers = require("./handler/socketHandler.js");
 require("dotenv").config();
 
 const app = express();

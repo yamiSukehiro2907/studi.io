@@ -6,8 +6,11 @@ import LoginPage from "./pages/LoginPage";
 import "./index.css";
 import HomePage from "./pages/HomePage";
 import LandingPage from "./pages/LandingPage";
-import { useSelector } from "react-redux";
-import type { RootState } from "./redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { fetchCurrentUser } from "@/api/user";
+import { clearUserData, setUserData } from "@/redux/slices/userSlice";
+import { persistor, type RootState } from "./redux/store";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
@@ -83,10 +86,40 @@ const LoggedOutRoute = () => {
 
 function App() {
   const { userData } = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    const validateSession = async () => {
+      if (userData) {
+        try {
+          const fetchedUser = await fetchCurrentUser();
+          dispatch(setUserData(fetchedUser));
+        } catch (error) {
+          dispatch(clearUserData());
+          await persistor.purge();
+          localStorage.clear();
+          navigate("/login");
+        }
+      } else {
+        console.log("No persisted user, skipping session validation.");
+      }
+      setIsLoading(false);
+    };
+
+    validateSession();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-base-300">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
+  }
   return (
     <Routes>
-      {/* Public routes for logged-out users - no navbar */}
       <Route element={<LoggedOutRoute />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
@@ -94,18 +127,15 @@ function App() {
         <Route path="/verify-email" element={<VerifyEmailPage />} />
       </Route>
 
-      {/* Landing page - accessible to everyone*/}
       <Route path="/welcome" element={<AppLayout />}>
         <Route index element={<LandingPage />} />
       </Route>
 
-      {/* Protected routes with AppLayout (includes navbar) */}
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>
 
-      {/* Catch-all redirect */}
       <Route
         path="*"
         element={<Navigate to={userData ? "/" : "/welcome"} replace />}

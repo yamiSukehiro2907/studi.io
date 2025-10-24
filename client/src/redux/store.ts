@@ -12,9 +12,11 @@ import {
 import storage from "redux-persist/lib/storage";
 
 import userReducer from "./slices/userSlice.ts";
+import roomReducer from "./slices/roomSlice.ts";
 
 const rootReducer = combineReducers({
   user: userReducer,
+  room: roomReducer,
 });
 
 const persistConfig = {

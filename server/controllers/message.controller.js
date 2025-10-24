@@ -19,7 +19,8 @@ const getMessagesForRoom = async (req, res) => {
       return res.status(404).json({ message: "Room not found" });
     }
 
-    const isMember = room.members.some((memberId) => memberId.equals(userId));
+    const isMember = room.members.some((member) => member.user.equals(userId));
+
     if (!isMember) {
       return res
         .status(403)
@@ -29,7 +30,7 @@ const getMessagesForRoom = async (req, res) => {
     const skip = (page - 1) * MESSAGES_PER_PAGE;
 
     const [result] = await Message.aggregate([
-      { $match: { room: mongoose.Types.ObjectId(roomId) } },
+      { $match: { room: new mongoose.Types.ObjectId(roomId) } },
       {
         $facet: {
           messages: [
@@ -47,6 +48,7 @@ const getMessagesForRoom = async (req, res) => {
             { $unwind: "$sender" },
             {
               $project: {
+                "sender._id": 1,
                 "sender.name": 1,
                 "sender.profileImage": 1,
                 text: 1,

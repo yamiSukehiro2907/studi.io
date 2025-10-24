@@ -1,148 +1,66 @@
-import { useState } from "react";
-import { Plus, Users, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Plus } from "lucide-react";
 import type { RootState } from "@/redux/store";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-
-const RoomListItem = ({
-  room,
-  isSelected,
-  onClick,
-}: {
-  room: { id: string; title: string; lastMessage: string };
-  isSelected: boolean;
-  onClick: () => void;
-}) => {
-  return (
-    <div
-      className={`p-4 flex items-center gap-4 cursor-pointer border-l-4 ${
-        isSelected
-          ? "bg-base-300 border-primary"
-          : "border-transparent hover:bg-base-200"
-      }`}
-      onClick={onClick}
-    >
-      <div className="avatar placeholder flex-shrink-0">
-        <div className="bg-primary/20 text-primary-content rounded-full w-12">
-          <span className="text-sm">
-            {room.title.substring(0, 2).toUpperCase()}
-          </span>
-        </div>
-      </div>
-      <div className="flex-1 overflow-hidden">
-        <h3 className="font-semibold truncate">{room.title}</h3>
-        <p className="text-sm text-base-content/70 truncate">
-          {room.lastMessage}
-        </p>
-      </div>
-    </div>
-  );
-};
-
-const WelcomePlaceholder = ({ userName }: { userName: string }) => {
-  return (
-    <div className="text-center text-base-content/60 max-w-sm mx-auto">
-      <Users className="size-16 mx-auto" />
-      <h2 className="text-2xl font-semibold mt-4">Welcome, {userName}!</h2>
-      <p className="mt-2">
-        Select a study room from the list to start collaborating, or create a
-        new one.
-      </p>
-    </div>
-  );
-};
-
-const CreateRoomModal = ({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) => {
-  const [roomName, setRoomName] = useState("");
-
-  const handleCreateRoom = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Creating room:", roomName);
-    onClose();
-    setRoomName("");
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className={`modal ${isOpen ? "modal-open" : ""}`}>
-      <div className="modal-box">
-        <button
-          className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-          onClick={onClose}
-        >
-          <X className="size-5" />
-        </button>
-        <h3 className="font-bold text-lg">Create a New Study Room</h3>
-        <p className="py-4 text-sm text-base-content/70">
-          Give your room a name to get started.
-        </p>
-        <form onSubmit={handleCreateRoom}>
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Room Name</span>
-            </label>
-            <input
-              type="text"
-              placeholder="e.g., Physics 101 Finals"
-              className="input input-bordered w-full"
-              value={roomName}
-              onChange={(e) => setRoomName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="modal-action">
-            <button type="button" className="btn btn-ghost" onClick={onClose}>
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary">
-              Create
-            </button>
-          </div>
-        </form>
-      </div>
-      <div className="modal-backdrop" onClick={onClose}></div>
-    </div>
-  );
-};
+import { useSelector, useDispatch } from "react-redux";
+import ChatPanel from "../components/ChatPanel";
+import { socket } from "@/config/socket";
+import { RoomListItem } from "@/components/RoomListItem";
+import { CreateRoomModal } from "@/components/CreateRoomModal";
+import { WelcomePlaceholder } from "@/components/WelcomePlaceHolder";
+import { getUserRooms } from "@/api/room";
+import { setRooms, setSelectedRoom } from "@/redux/slices/roomSlice";
 
 export default function HomePage() {
-  // @ts-ignore
-  const { user } = useSelector((state: RootState) => state.user);
-  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
+  const dispatch = useDispatch();
+  const { userData } = useSelector((state: RootState) => state.user);
+  const { rooms, selectedRoom } = useSelector((state: RootState) => state.room);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isLoadingRooms, setIsLoadingRooms] = useState(true);
 
-  const rooms = [
-    {
-      id: "1",
-      title: "Physics 101 Finals Prep",
-      members: 4,
-      lastMessage: "Let's review chapter 3.",
-    },
-    {
-      id: "2",
-      title: "Data Structures & Algos",
-      members: 8,
-      lastMessage: "See you at 5.",
-    },
-    {
-      id: "3",
-      title: "History of Art",
-      members: 2,
-      lastMessage: "Just uploaded the slides.",
-    },
-  ];
+  useEffect(() => {
+    const fetchUserRooms = async () => {
+      try {
+        setIsLoadingRooms(true);
+        const response = await getUserRooms();
+        dispatch(setRooms(response));
+      } catch (error) {
+        console.error("Failed to fetch rooms:", error);
+      } finally {
+        setIsLoadingRooms(false);
+      }
+    };
 
-  const userName = user ? user.name.split(" ")[0] : "Student";
+    fetchUserRooms();
+  }, [dispatch]);
+
+  useEffect(() => {
+    socket.connect();
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (selectedRoom?._id) {
+      socket.emit("join-room", selectedRoom._id);
+      console.log(`Emitted join-room for ${selectedRoom._id}`);
+    }
+  }, [selectedRoom]);
+
+  const filteredRooms = rooms.filter((room) =>
+    room.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const userName = userData ? userData.name.split(" ")[0] : "Student";
+
+  const handleRoomSelect = (room: any) => {
+    dispatch(setSelectedRoom(room));
+  };
 
   return (
-    <div className="flex h-full border-t border-base-300">
+    <div className="flex h-[calc(100vh-64px)] border-t border-base-300">
       <div className="w-full md:w-[350px] lg:w-[400px] flex flex-col bg-base-100 flex-shrink-0 border-r border-base-300">
         <div className="p-4 flex justify-between items-center border-b border-base-300 h-[69px]">
           <h2 className="text-xl font-bold">Study Rooms</h2>
@@ -160,51 +78,52 @@ export default function HomePage() {
             type="text"
             placeholder="Search rooms..."
             className="input input-bordered w-full h-10"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {rooms.length > 0 ? (
-            rooms.map((room) => (
+          {isLoadingRooms ? (
+            <div className="flex items-center justify-center p-6">
+              <span className="loading loading-spinner loading-md"></span>
+            </div>
+          ) : filteredRooms.length > 0 ? (
+            filteredRooms.map((room) => (
               <RoomListItem
-                key={room.id}
+                key={room._id}
                 room={room}
-                isSelected={selectedRoomId === room.id}
-                onClick={() => setSelectedRoomId(room.id)}
+                isSelected={selectedRoom?._id === room._id}
+                onClick={() => handleRoomSelect(room)}
               />
             ))
           ) : (
             <div className="text-center p-6 text-base-content/60">
-              <p>No study rooms found.</p>
-              <button
-                className="btn btn-primary btn-sm mt-4"
-                onClick={() => setIsModalOpen(true)}
-              >
-                Create one
-              </button>
+              {searchQuery ? (
+                <p>No rooms found matching "{searchQuery}"</p>
+              ) : (
+                <>
+                  <p>No study rooms found.</p>
+                  <button
+                    className="btn btn-primary btn-sm mt-4"
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    Create one
+                  </button>
+                </>
+              )}
             </div>
           )}
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center bg-base-200/50 p-4">
-        {selectedRoomId ? (
-          <div>
-            <h1 className="text-2xl font-bold">
-              Room: {rooms.find((r) => r.id === selectedRoomId)?.title}
-            </h1>
-            <p className="mt-4">
-              (Here you would render the Chat, Whiteboard, and Resource Hub)
-            </p>
-            <Link
-              to={`/room/${selectedRoomId}`}
-              className="btn btn-primary mt-4"
-            >
-              Open Room
-            </Link>
-          </div>
+      <div className="flex-1 flex flex-col bg-base-200/50">
+        {selectedRoom ? (
+          <ChatPanel roomId={selectedRoom._id} />
         ) : (
-          <WelcomePlaceholder userName={userName} />
+          <div className="flex-1 flex items-center justify-center">
+            <WelcomePlaceholder userName={userName} />
+          </div>
         )}
       </div>
 
