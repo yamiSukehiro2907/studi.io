@@ -14,6 +14,9 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
   : ["http://localhost:5173"];
 
+console.log("Environment ALLOWED_ORIGINS:", process.env.ALLOWED_ORIGINS);
+console.log("Parsed allowedOrigins:", allowedOrigins);
+
 const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
@@ -29,11 +32,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: function (origin, callback) {
+      console.log("Request from origin:", origin);
       if (!origin) return callback(null, true);
-
       if (allowedOrigins.indexOf(origin) !== -1) {
+        console.log("Origin allowed:", origin);
         callback(null, true);
       } else {
+        console.log("Origin blocked:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -56,4 +61,5 @@ setupSocketHandlers(io);
 server.listen(PORT, async () => {
   await connectMongoDB();
   console.log(`Server is running at ${PORT}`);
+  console.log(`CORS enabled for:`, allowedOrigins);
 });
