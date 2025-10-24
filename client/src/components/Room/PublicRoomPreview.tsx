@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { Users, Lock, Globe, Crown } from "lucide-react";
 import type { StudyRoom } from "@/config/schema/StudyRoom";
 
@@ -26,13 +26,16 @@ export function PublicRoomPreview({
   const remainingCount = (room.members?.length || 0) - 5;
 
   return (
-    <div className="flex-1 flex items-center justify-center p-8">
-      <div className="card bg-base-100 shadow-xl max-w-2xl w-full">
-        <div className="card-body">
-          <div className="flex items-start justify-between mb-4">
+    <div className="flex-1 flex items-center justify-center p-6 sm:p-8">
+      <div className="card bg-base-100 shadow-xl max-w-2xl w-full border border-base-300 hover:shadow-2xl transition-all duration-300 rounded-2xl">
+        <div className="card-body space-y-4">
+          {/* Header */}
+          <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h2 className="card-title text-2xl mb-2">{room.name}</h2>
-              <div className="flex items-center gap-2">
+              <h2 className="card-title text-2xl font-bold mb-1">
+                {room.name}
+              </h2>
+              <div className="flex items-center gap-2 flex-wrap">
                 {room.isPrivate ? (
                   <div className="badge badge-warning gap-1">
                     <Lock className="size-3" />
@@ -53,31 +56,36 @@ export function PublicRoomPreview({
             </div>
           </div>
 
+          {/* Description */}
           {room.description && (
-            <p className="text-base-content/70 mb-6">{room.description}</p>
+            <p className="text-base-content/70 text-sm sm:text-base leading-relaxed">
+              {room.description}
+            </p>
           )}
 
-          <div className="divider my-2"></div>
+          <div className="divider my-3"></div>
 
-          {/* Owner Section */}
+          {/* Owner */}
           {room.owner && (
-            <div className="mb-4">
+            <div>
               <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
                 <Crown className="size-4 text-warning" />
                 Room Owner
               </h3>
               <div className="flex items-center gap-3">
                 <div className="avatar">
-                  <div className="w-10 h-10 rounded-full ring ring-warning ring-offset-base-100 ring-offset-2">
-                    <img
-                      src={
-                        room.owner.profileImage ||
-                        `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          room.owner.name
-                        )}`
-                      }
-                      alt={room.owner.name}
-                    />
+                  <div className="w-10 h-10 rounded-full ring ring-warning ring-offset-base-100 ring-offset-2 overflow-hidden">
+                    {room.owner.profileImage ? (
+                      <img
+                        src={room.owner.profileImage}
+                        alt={room.owner.name}
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-warning/60 to-error/60 text-base-content font-bold">
+                        {room.owner.name?.[0]?.toUpperCase() || "?"}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <span className="font-medium">{room.owner.name}</span>
@@ -85,8 +93,8 @@ export function PublicRoomPreview({
             </div>
           )}
 
-          {/* Members Section */}
-          <div className="mb-6">
+          {/* Members */}
+          <div>
             <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
               <Users className="size-4 text-primary" />
               Members ({room.members?.length || 0})
@@ -97,19 +105,21 @@ export function PublicRoomPreview({
                 {membersToShow.map((member: any) => (
                   <div
                     key={member._id}
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-base-200/50 transition-colors"
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-base-200/60 transition-colors duration-200"
                   >
                     <div className="avatar">
-                      <div className="w-9 h-9 rounded-full">
-                        <img
-                          src={
-                            member.user.profileImage ||
-                            `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                              member.user.name
-                            )}`
-                          }
-                          alt={member.user.name}
-                        />
+                      <div className="w-9 h-9 rounded-full overflow-hidden bg-base-300">
+                        {member.user.profileImage ? (
+                          <img
+                            src={member.user.profileImage}
+                            alt={member.user.name}
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="flex items-center justify-center h-full w-full bg-gradient-to-br from-primary/40 to-secondary/40 text-base-content/80 font-semibold">
+                            {member.user.name?.[0]?.toUpperCase() || "?"}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -117,17 +127,19 @@ export function PublicRoomPreview({
                         {member.user.name}
                       </p>
                       {member.isAdmin && (
-                        <span className="text-xs text-warning">Admin</span>
+                        <span className="text-xs text-warning font-medium">
+                          Admin
+                        </span>
                       )}
                     </div>
                   </div>
                 ))}
 
                 {remainingCount > 0 && (
-                  <div className="flex items-center gap-3 p-2">
+                  <div className="flex items-center gap-3 p-2 opacity-80">
                     <div className="avatar placeholder">
-                      <div className="w-9 h-9 rounded-full bg-base-300">
-                        <span className="text-xs">+{remainingCount}</span>
+                      <div className="w-9 h-9 rounded-full bg-base-300 text-sm flex items-center justify-center">
+                        +{remainingCount}
                       </div>
                     </div>
                     <span className="text-sm text-base-content/60">
@@ -138,14 +150,19 @@ export function PublicRoomPreview({
                 )}
               </div>
             ) : (
-              <p className="text-sm text-base-content/60">No members yet</p>
+              <p className="text-sm text-base-content/60 italic">
+                No members yet
+              </p>
             )}
           </div>
 
-          <div className="card-actions justify-end">
+          {/* Join Button */}
+          <div className="card-actions justify-end mt-4">
             <button
               type="button"
-              className="btn btn-primary btn-lg w-full"
+              className={`btn btn-primary btn-lg w-full transition-transform duration-200 ${
+                !isJoining ? "hover:scale-[1.02]" : ""
+              }`}
               onClick={handleJoin}
               disabled={isJoining}
             >

@@ -3,6 +3,7 @@ export interface Member {
     _id: string;
     name: string;
     profileImage?: string;
+    email: string;
   };
   isAdmin: boolean;
   _id?: string;

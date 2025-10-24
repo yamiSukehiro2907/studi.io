@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 
 const updateUser = async (req, res) => {
   try {
-    console.log(req.file)
     const { name, email, username, bio } = req.body;
     if (!name && !username && !bio && !req.file && !email) {
       return res
@@ -53,8 +52,6 @@ const updateUser = async (req, res) => {
     let updatedUser = await User.findById(req.user._id).select(
       "-password -refreshToken"
     );
-
-    console.log(updatedUser)
     return res.status(200).json(updatedUser);
   } catch (err) {
     console.log(err);

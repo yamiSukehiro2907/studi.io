@@ -45,7 +45,7 @@ export default function SignUpPage() {
         id: loadingToastId,
       });
 
-      navigate("/login");
+      navigate("/verify-email");
     } catch (error: any) {
       console.error("Signup error:", error);
       let errorMessage = "Signup failed. Please try again.";

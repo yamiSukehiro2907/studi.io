@@ -72,7 +72,7 @@ export default function VerifyEmailPage() {
       toast.success("Email verified successfully!", { id: loadingToastId });
 
       setTimeout(() => {
-        navigate("/");
+        navigate("/login");
       }, 2000);
     } catch (err: any) {
       console.error(err);

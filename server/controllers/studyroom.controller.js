@@ -95,6 +95,7 @@ const getRoomInfo = async (req, res) => {
     if (!isMember) {
       return res.status(403).json({ message: "Access denied: Not a member" });
     }
+    console.log(room)
 
     return res.status(200).json(room);
   } catch (error) {
