@@ -76,7 +76,6 @@ const getMessagesForRoom = async (req, res) => {
     const messages = result.messages;
     const totalMessages = result.totalMessages || 0;
     const totalPages = Math.ceil(totalMessages / MESSAGES_PER_PAGE);
-    console.log(messages)
     return res.status(200).json({
       messages: messages,
       pagination: {

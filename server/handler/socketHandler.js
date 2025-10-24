@@ -8,9 +8,6 @@ const setupSocketHandlers = (io) => {
 
   io.on("connection", (socket) => {
     const userId = socket.user._id;
-    console.log(
-      `Authenticated user connected: ${socket.user.name} (${socket.id})`
-    );
 
     socket.on("join-room", async (roomId) => {
       try {
@@ -38,9 +35,6 @@ const setupSocketHandlers = (io) => {
         }
 
         socket.join(roomId);
-        console.log(
-          `User ${socket.user.name} (${socket.id}) joined room: ${roomId}`
-        );
 
         socket.to(roomId).emit("user-joined", {
           userId: userId.toString(),
@@ -99,8 +93,6 @@ const setupSocketHandlers = (io) => {
         await newMessage.populate("sender", "name profileImage");
 
         io.to(roomId).emit("newMessage", newMessage);
-
-        console.log(`Message sent by ${socket.user.name} in room ${roomId}`);
       } catch (error) {
         console.error("Error saving/sending message:", error);
         socket.emit("messageError", { message: "Failed to send message" });
@@ -109,7 +101,6 @@ const setupSocketHandlers = (io) => {
 
     socket.on("leave-room", (roomId) => {
       socket.leave(roomId);
-      console.log(`User ${socket.user.name} (${userId}) left room: ${roomId}`);
 
       socket.to(roomId).emit("user-left", {
         userId: userId.toString(),
@@ -119,10 +110,6 @@ const setupSocketHandlers = (io) => {
     });
 
     socket.on("disconnect", () => {
-      console.log(
-        `User disconnected: ${socket.user?.name || "Unknown"} (${socket.id})`
-      );
-
       const rooms = Array.from(socket.rooms).filter(
         (room) => room !== socket.id
       );
