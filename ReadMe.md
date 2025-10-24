@@ -1,11 +1,8 @@
-Perfect! Here's an enhanced, GitHub-ready version of your README with badges, links, and a polished structure:
-
-````markdown
 # 📚 Studi.io
 
-[![GitHub stars](https://img.shields.io/github/stars/yamiSukehiro2907/studyhub?style=social)](https://github.com/yamiSukehiro2907/studyhub/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/yamiSukehiro2907/studyhub)](https://github.com/yamiSukehiro2907/studyhub/issues)
-[![GitHub forks](https://img.shields.io/github/forks/yamiSukehiro2907/studyhub?style=social)](https://github.com/yamiSukehiro2907/studyhub/network/members)
+[![GitHub stars](https://img.shields.io/github/stars/yamiSukehiro2907/studi.io?style=social)](https://github.com/yamiSukehiro2907/studi.io/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/yamiSukehiro2907/studi.io)](https://github.com/yamiSukehiro2907/studi.io/issues)
+[![GitHub forks](https://img.shields.io/github/forks/yamiSukehiro2907/studi.io?style=social)](https://github.com/yamiSukehiro2907/studi.io/network/members)
 
 **StudyHub** is a modern, interactive web application for creating and joining virtual study rooms. It helps students connect, collaborate, and stay productive in a focused online environment.
 
@@ -69,7 +66,6 @@ Perfect! Here's an enhanced, GitHub-ready version of your README with badges, li
 git clone https://github.com/yamiSukehiro2907/studi.io
 cd studyhub
 ```
-````
 
 2. **Backend Dependencies**
 
@@ -153,13 +149,11 @@ Contributions are welcome! Please follow these steps:
 
 ## 🔗 Links
 
-- **GitHub Repository:** [StudyHub](https://github.com/yamiSukehiro2907/studi.io)
-- **Project Demo:** _(Optional: Add your live demo link here)_
+- **GitHub Repository:** [Studi.io](https://github.com/yamiSukehiro2907/studi.io)
+- **Project Demo:** 
 
 ---
 
 ## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-```
