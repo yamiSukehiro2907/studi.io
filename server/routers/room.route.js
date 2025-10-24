@@ -5,6 +5,7 @@ const {
   getAllRooms,
   getRoomInfo,
   joinPublicRoom,
+  getPublicRoom,
 } = require("../controllers/studyroom.controller");
 
 const router = express.Router();
@@ -13,8 +14,11 @@ router.post("/create", validate, createStudyRoom);
 
 router.get("/", validate, getAllRooms);
 
+router.get("/public", validate, getPublicRoom);
+
 router.get("/:id", validate, getRoomInfo);
 
 router.post("/join/:id", validate, joinPublicRoom);
+
 
 module.exports = router;

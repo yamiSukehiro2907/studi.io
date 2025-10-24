@@ -15,13 +15,11 @@ export interface StudyRoom {
   name: string;
   description?: string;
   isPrivate: boolean;
-  owner:
-    | string
-    | {
-        _id: string;
-        name: string;
-        profileImage?: string;
-      };
+  owner: {
+    _id: string;
+    name: string;
+    profileImage?: string;
+  };
   members: Member[];
   whiteboardState?: string;
   resourceHub: Section[];
