@@ -119,7 +119,7 @@ export default function HomePage() {
 
       <div className="flex-1 flex flex-col bg-base-200/50">
         {selectedRoom ? (
-          <ChatPanel roomId={selectedRoom._id} />
+          <ChatPanel />
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <WelcomePlaceholder userName={userName} />

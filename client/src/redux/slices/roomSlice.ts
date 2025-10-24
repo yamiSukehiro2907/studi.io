@@ -1,9 +1,11 @@
+import type { Message } from "@/config/schema/Message";
 import type { Member, StudyRoom } from "@/config/schema/StudyRoom";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface RoomState {
   rooms: StudyRoom[];
   selectedRoom: StudyRoom | null;
+  messages: { [roomId: string]: Message[] };
   isLoading: boolean;
   error: string | null;
 }
@@ -11,6 +13,7 @@ interface RoomState {
 const initialState: RoomState = {
   rooms: [],
   selectedRoom: null,
+  messages: {},
   isLoading: false,
   error: null,
 };
@@ -47,6 +50,7 @@ const roomSlice = createSlice({
       if (state.selectedRoom?._id === action.payload) {
         state.selectedRoom = null;
       }
+      delete state.messages[action.payload];
       state.error = null;
     },
 
@@ -83,6 +87,12 @@ const roomSlice = createSlice({
         );
       }
     },
+    setInitialMessages(
+      state,
+      action: PayloadAction<{ roomId: string; messages: Message[] }>
+    ) {
+      state.messages[action.payload.roomId] = action.payload.messages;
+    },
 
     updateWhiteboardState: (
       state,
@@ -95,6 +105,55 @@ const roomSlice = createSlice({
       if (state.selectedRoom?._id === action.payload.roomId) {
         state.selectedRoom.whiteboardState = action.payload.whiteboardState;
       }
+    },
+
+    setMessages: (
+      state,
+      action: PayloadAction<{ roomId: string; messages: Message[] }>
+    ) => {
+      state.messages[action.payload.roomId] = action.payload.messages;
+    },
+
+    addMessage: (state, action: PayloadAction<Message>) => {
+      const roomId = action.payload.room;
+      if (!state.messages[roomId]) {
+        state.messages[roomId] = [];
+      }
+      state.messages[roomId].push(action.payload);
+    },
+
+    updateMessage: (
+      state,
+      action: PayloadAction<{
+        roomId: string;
+        messageId: string;
+        content: string;
+      }>
+    ) => {
+      const { roomId, messageId, content } = action.payload;
+      const messages = state.messages[roomId];
+      if (messages) {
+        const index = messages.findIndex((m) => m._id === messageId);
+        if (index !== -1) {
+          messages[index].content = content;
+          messages[index].updatedAt = new Date().toISOString();
+        }
+      }
+    },
+
+    deleteMessage: (
+      state,
+      action: PayloadAction<{ roomId: string; messageId: string }>
+    ) => {
+      const { roomId, messageId } = action.payload;
+      const messages = state.messages[roomId];
+      if (messages) {
+        state.messages[roomId] = messages.filter((m) => m._id !== messageId);
+      }
+    },
+
+    clearMessages: (state, action: PayloadAction<string>) => {
+      delete state.messages[action.payload];
     },
 
     setLoading: (state, action: PayloadAction<boolean>) => {
@@ -113,6 +172,7 @@ const roomSlice = createSlice({
     clearRooms: (state) => {
       state.rooms = [];
       state.selectedRoom = null;
+      state.messages = {};
       state.error = null;
       state.isLoading = false;
     },
@@ -128,6 +188,12 @@ export const {
   addMemberToRoom,
   removeMemberFromRoom,
   updateWhiteboardState,
+  setMessages,
+  addMessage,
+  setInitialMessages,
+  updateMessage,
+  deleteMessage,
+  clearMessages,
   setLoading,
   setError,
   clearError,

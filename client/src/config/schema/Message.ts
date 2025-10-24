@@ -3,8 +3,11 @@ export interface Message {
   content: string;
   sender: {
     _id: string;
-    name: string;
+    username: string;
+    name?: string;
     profileImage?: string;
-  };
+  } ; 
+  room: string;
   createdAt: string;
+  updatedAt: string;
 }

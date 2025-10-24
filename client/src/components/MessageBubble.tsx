@@ -1,15 +1,5 @@
+import type { Message } from "@/config/schema/Message";
 import React from "react";
-
-interface Message {
-  _id: string;
-  content: string;
-  sender: {
-    _id: string;
-    name: string;
-    profileImage?: string;
-  };
-  createdAt: string;
-}
 
 interface MessageBubbleProps {
   message: Message;

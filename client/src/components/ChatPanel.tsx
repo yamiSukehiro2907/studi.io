@@ -1,106 +1,125 @@
-// src/components/ChatPanel.tsx
-import React, { useState, useEffect, useRef } from "react";
-import MessageBubble from "./MessageBubble";
+import React, { useEffect, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import ChatInput from "./ChatInput";
-import { useSelector } from "react-redux";
-import type { RootState } from "../redux/store";
+import MessageBubble from "@/components/MessageBubble";
+import type { RootState } from "@/redux/store";
+import { useSocketMessages } from "@/hooks/useSocketMessages";
+import { getMessagesOfRoom } from "@/api/message";
+import { setInitialMessages } from "../redux/slices/roomSlice";
 import type { Message } from "@/config/schema/Message";
-import api from "@/config/axiosConfig";
-import { socket } from "@/config/socket";
 
-interface ChatPanelProps {
-  roomId: string | null;
-}
-
-const ChatPanel: React.FC<ChatPanelProps> = ({ roomId }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const { userData } = useSelector((state: RootState) => state.user);
+const ChatPanel: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useSocketMessages();
+
+  const selectedRoom = useSelector(
+    (state: RootState) => state.room.selectedRoom
+  );
+  const messages: Message[] = useSelector((state: RootState) =>
+    selectedRoom ? state.room.messages[selectedRoom._id] || [] : []
+  );
+  const { userData } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
-    if (!roomId) {
-      setMessages([]);
-      return;
+    if (selectedRoom) {
+      const fetchInitialMessages = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+          const fetchedMessages = await getMessagesOfRoom(selectedRoom._id);
+          dispatch(
+            setInitialMessages({
+              roomId: selectedRoom._id,
+              messages: fetchedMessages,
+            })
+          );
+        } catch (err) {
+          console.error("Failed to fetch initial messages:", err);
+          setError("Failed to load messages.");
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchInitialMessages();
     }
+  }, [selectedRoom, dispatch]);
 
-    const fetchMessages = async () => {
-      setIsLoading(true);
-      try {
-        const response = await api.get(`/messages/${roomId}`);
-        setMessages(response.data.messages || []);
-      } catch (error) {
-        console.error("Failed to fetch messages:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchMessages();
-  }, [roomId]);
   useEffect(() => {
-    const handleNewMessage = (newMessage: Message) => {};
+    if (!isLoading && messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isLoading]);
 
-    socket.on("newMessage", handleNewMessage);
-
-    // Cleanup listener on component unmount or when roomId changes
-    return () => {
-      socket.off("newMessage", handleNewMessage);
-    };
-  }, [roomId]); // Re-subscribe if roomId changes
-
-  // --- 3. Scroll to Bottom when new messages arrive ---
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  // --- 4. Function to Send Messages ---
-  const handleSendMessage = (content: string) => {
-    if (!roomId || !content) return;
-
-    // Emit the message via socket
-    socket.emit("sendMessage", {
-      roomId: roomId,
-      content: content,
-      // Sender info is attached on the backend using socket.user
-    });
-  };
-
-  if (!roomId) {
-    // Optionally return a placeholder if no room is selected
+  if (!selectedRoom && !isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        Select a room to start chatting.
+      <div className="flex flex-col h-full">
+        <div className="flex-1 flex items-center justify-center text-base-content/50">
+          <div className="text-center">
+            <p className="text-lg mb-2">No room selected</p>
+            <p className="text-sm">Select a room to start chatting</p>
+          </div>
+        </div>
+        <ChatInput />
       </div>
     );
   }
 
   return (
     <div className="flex flex-col h-full">
-      {/* Optional Header for the Chat Panel */}
-      <div className="p-4 border-b border-base-300 h-[69px] flex items-center">
-        <h2 className="font-semibold">Chat</h2>{" "}
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {isLoading && <p className="text-center">Loading messages...</p>}
-        {!isLoading && messages.length === 0 && (
-          <p className="text-center text-base-content/60">
-            No messages yet. Start the conversation!
+      <div className="p-4 bg-base-200 border-b border-base-300">
+        <h2 className="font-semibold text-lg">
+          {selectedRoom?.name || "Loading..."}
+        </h2>
+        {selectedRoom && (
+          <p className="text-sm text-base-content/70">
+            {selectedRoom.members.length} member
+            {selectedRoom.members.length !== 1 ? "s" : ""}
           </p>
         )}
-        {messages.map((msg) => (
-          <MessageBubble
-            key={msg._id}
-            message={msg}
-            isOwnMessage={msg.sender._id === userData?._id}
-          />
-        ))}
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        {" "}
+        {/* Reduced space-y */}
+        {isLoading && (
+          <div className="flex items-center justify-center h-full">
+            <span className="loading loading-spinner text-primary"></span>
+          </div>
+        )}
+        {!isLoading && error && (
+          <div className="flex items-center justify-center h-full text-error">
+            <p>{error}</p>
+          </div>
+        )}
+        {!isLoading && !error && messages.length === 0 && (
+          <div className="flex items-center justify-center h-full text-base-content/50">
+            <p>No messages yet. Start the conversation!</p>
+          </div>
+        )}
+        {!isLoading &&
+          !error &&
+          messages.length > 0 &&
+          messages.map((msg) => {
+            const isOwnMessage = msg.sender._id === userData?._id;
+            const messageKey =
+              msg._id || `temp-${msg.createdAt}-${msg.sender._id}`;
+
+            return (
+              <MessageBubble
+                key={messageKey}
+                message={msg}
+                isOwnMessage={isOwnMessage}
+              />
+            );
+          })}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
-      <ChatInput onSendMessage={handleSendMessage} />
+      <ChatInput />
     </div>
   );
 };

@@ -14,13 +14,12 @@ const getMessagesForRoom = async (req, res) => {
       return res.status(400).json({ message: "Invalid Room ID format" });
     }
 
-    const room = await StudyRoom.findById(roomId).select("members");
+    const room = await StudyRoom.findById(roomId).select("members").lean();
     if (!room) {
       return res.status(404).json({ message: "Room not found" });
     }
 
     const isMember = room.members.some((member) => member.user.equals(userId));
-
     if (!isMember) {
       return res
         .status(403)
@@ -29,12 +28,13 @@ const getMessagesForRoom = async (req, res) => {
 
     const skip = (page - 1) * MESSAGES_PER_PAGE;
 
-    const [result] = await Message.aggregate([
+    const results = await Message.aggregate([
       { $match: { room: new mongoose.Types.ObjectId(roomId) } },
       {
         $facet: {
+          totalCount: [{ $count: "count" }],
           messages: [
-            { $sort: { createdAt: 1 } },
+            { $sort: { createdAt: -1 } },
             { $skip: skip },
             { $limit: MESSAGES_PER_PAGE },
             {
@@ -42,30 +42,41 @@ const getMessagesForRoom = async (req, res) => {
                 from: "users",
                 localField: "sender",
                 foreignField: "_id",
-                as: "sender",
+                as: "senderInfo",
               },
             },
-            { $unwind: "$sender" },
+            { $unwind: "$senderInfo" },
+            { $sort: { createdAt: 1 } },
             {
               $project: {
-                "sender._id": 1,
-                "sender.name": 1,
-                "sender.profileImage": 1,
-                text: 1,
+                _id: 1,
+                content: 1,
+                room: 1,
                 createdAt: 1,
                 updatedAt: 1,
+                sender: {
+                  _id: "$senderInfo._id",
+                  name: "$senderInfo.name",
+                  profileImage: "$senderInfo.profileImage",
+                },
               },
             },
           ],
-          totalCount: [{ $count: "count" }],
+        },
+      },
+      {
+        $project: {
+          messages: "$messages",
+          totalMessages: { $arrayElemAt: ["$totalCount.count", 0] },
         },
       },
     ]);
 
+    const result = results[0] || { messages: [], totalMessages: 0 };
     const messages = result.messages;
-    const totalMessages = result.totalCount[0]?.count || 0;
+    const totalMessages = result.totalMessages || 0;
     const totalPages = Math.ceil(totalMessages / MESSAGES_PER_PAGE);
-
+    console.log(messages)
     return res.status(200).json({
       messages: messages,
       pagination: {

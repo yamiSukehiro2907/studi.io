@@ -26,8 +26,8 @@ const setupSocketHandlers = (io) => {
           return;
         }
 
-        const isMember = room.members.some((memberId) =>
-          memberId.equals(userId)
+        const isMember = room.members.some((memberObj) =>
+          memberObj.user.equals(userId)
         );
 
         if (!isMember) {
@@ -39,7 +39,7 @@ const setupSocketHandlers = (io) => {
 
         socket.join(roomId);
         console.log(
-          `User ${socket.user.name} (${userId}) joined room: ${roomId}`
+          `User ${socket.user.name} (${socket.id}) joined room: ${roomId}`
         );
 
         socket.to(roomId).emit("user-joined", {
@@ -78,8 +78,8 @@ const setupSocketHandlers = (io) => {
           return;
         }
 
-        const isMember = room.members.some((memberId) =>
-          memberId.equals(senderId)
+        const isMember = room.members.some((memberObj) =>
+          memberObj.user.equals(senderId)
         );
 
         if (!isMember) {
@@ -90,7 +90,7 @@ const setupSocketHandlers = (io) => {
         }
 
         const newMessage = new Message({
-          text: content.trim(),
+          content: content.trim(),
           sender: senderId,
           room: roomId,
         });
@@ -119,7 +119,9 @@ const setupSocketHandlers = (io) => {
     });
 
     socket.on("disconnect", () => {
-      console.log(`User disconnected: ${socket.user.name} (${socket.id})`);
+      console.log(
+        `User disconnected: ${socket.user?.name || "Unknown"} (${socket.id})`
+      );
 
       const rooms = Array.from(socket.rooms).filter(
         (room) => room !== socket.id
@@ -128,7 +130,7 @@ const setupSocketHandlers = (io) => {
       rooms.forEach((roomId) => {
         socket.to(roomId).emit("user-left", {
           userId: userId.toString(),
-          userName: socket.user.name,
+          userName: socket.user?.name || "Someone",
           roomId: roomId,
         });
       });
