@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/update", validate, upload.single("profileImage"), updateUser);
 router.get("/profile", validate, getProfile);
-router.post("/change-password", validate, changePassword);
+router.post("/change-password", changePassword);
 router.post(
   "/change-password-with-current",
   validate,

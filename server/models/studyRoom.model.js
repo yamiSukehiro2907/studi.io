@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const sectionSchema = require("./section.model");
 
 const studyRoomSchema = new mongoose.Schema(
   {
@@ -21,8 +22,10 @@ const studyRoomSchema = new mongoose.Schema(
     },
     members: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
         isAdmin: {
           type: Boolean,
           default: false,

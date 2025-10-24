@@ -13,7 +13,7 @@ router.post("/create", validate, createStudyRoom);
 
 router.get("/", validate, getAllRooms);
 
-router.get("/:id", getRoomInfo);
+router.get("/:id", validate, getRoomInfo);
 
 router.post("/join/:id", validate, joinPublicRoom);
 

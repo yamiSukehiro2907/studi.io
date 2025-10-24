@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 
 const updateUser = async (req, res) => {
   try {
+    console.log(req.file)
     const { name, email, username, bio } = req.body;
     if (!name && !username && !bio && !req.file && !email) {
       return res
@@ -38,7 +39,8 @@ const updateUser = async (req, res) => {
     if (bio && user.bio !== bio) user.bio = bio;
     if (req.file) {
       try {
-        user.profileImage = await uploadprofileImageCloudinary(req.file.path);
+        user.profileImage = await uploadprofileImageCloudinary(req.file);
+        console.log("Entered" + user.profileImage)
       } catch (uploadError) {
         return res.status(500).json({
           message: "Failed to upload image",
@@ -51,6 +53,8 @@ const updateUser = async (req, res) => {
     let updatedUser = await User.findById(req.user._id).select(
       "-password -refreshToken"
     );
+
+    console.log(updatedUser)
     return res.status(200).json(updatedUser);
   } catch (err) {
     console.log(err);

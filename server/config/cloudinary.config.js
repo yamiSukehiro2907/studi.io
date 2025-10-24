@@ -8,29 +8,26 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadprofileImageCloudinary = async (localFilePath) => {
-  try {
-    if (!localFilePath) {
-      throw new Error("No local file path provided");
+const uploadprofileImageCloudinary = async (file) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "profile_images",
+        resource_type: "auto",
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result.secure_url);
+      }
+    );
+    if (file.buffer) {
+      const bufferStream = require("stream").Readable.from(file.buffer);
+      bufferStream.pipe(uploadStream);
     }
-
-    if (!fs.existsSync(localFilePath)) {
-      throw new Error("File not found: " + localFilePath);
+    else if (file.path) {
+      require("fs").createReadStream(file.path).pipe(uploadStream);
     }
-
-    const response = await cloudinary.uploader.upload(localFilePath, {
-      resource_type: "auto",
-      folder: "profile_pictures",
-    });
-
-    fs.unlinkSync(localFilePath);
-
-    return response.secure_url;
-  } catch (err) {
-    if (fs.existsSync(localFilePath)) {
-      fs.unlinkSync(localFilePath);
-    }
-  }
+  });
 };
 
 module.exports = uploadprofileImageCloudinary;

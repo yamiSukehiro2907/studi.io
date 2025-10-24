@@ -8,3 +8,5 @@ const sectionSchema = new mongoose.Schema({
   },
   resources: [resourceSchema],
 });
+
+module.exports = sectionSchema;
