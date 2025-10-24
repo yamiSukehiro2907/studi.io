@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Plus, Search } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
 import type { StudyRoom } from "@/config/schema/StudyRoom";
 import { getPublicRooms } from "@/api/room";
 import toast from "react-hot-toast";
-import { RoomListItem } from "@/components/Room/RoomListItem";
 import { RoomList } from "./RoomList";
 import { SidebarHeader } from "./SidebarHeader";
 import { SidebarTabs } from "./SidebarTabs";
