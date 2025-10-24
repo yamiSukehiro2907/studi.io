@@ -15,6 +15,10 @@ const studyRoomSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    roomImage: {
+      type: String,
+      default: "",
+    },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

@@ -1,5 +1,5 @@
 const StudyRoom = require("../models/studyRoom.model.js");
-
+const uploadprofileImageCloudinary = require("../config/cloudinary.config");
 const createStudyRoom = async (req, res) => {
   try {
     const { name, description } = req.body;
@@ -65,8 +65,11 @@ const getPublicRoom = async (req, res) => {
 
     const rooms = await StudyRoom.find(query)
       .populate("owner", "name profileImage")
+      .populate("members.user", "name profileImage")
       .sort({ createdAt: -1 });
 
+    console.log(rooms);
+    console.log(rooms[0].members);
     return res.status(200).json(rooms);
   } catch (error) {
     console.log("Error fetching public rooms:", error);
@@ -151,10 +154,60 @@ const joinPublicRoom = async (req, res) => {
   }
 };
 
+const updateRoomInfo = async (req, res) => {
+  try {
+    const roomId = req.params.id;
+
+    const { name, description, isPrivate } = req.body;
+
+    if (!name && !description && !isPrivate && !req.file) {
+      return res
+        .status(400)
+        .json({ message: "At least one field is required" });
+    }
+
+    const room = await StudyRoom.findById(roomId);
+
+    if (!room) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+
+    if (name && room.name !== name) {
+      room.name = name;
+    }
+    if (description && room.description !== description) {
+      room.description = description;
+    }
+    if (isPrivate && isPrivate === "true") {
+      room.isPrivate = true;
+    }
+    if (req.file) {
+      try {
+        room.roomImage = await uploadprofileImageCloudinary(req.file);
+      } catch (uploadError) {
+        return res.status(500).json({
+          message: "Failed to upload image",
+          error: uploadError.message,
+        });
+      }
+    }
+    await room.save();
+
+    let updatedRoom = await StudyRoom.findById(roomId)
+      .populate("owner", "name profileImage")
+      .populate("members.user", "name profileImage");
+
+    return res.status(200).json(updatedRoom);
+  } catch (error) {
+    return res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
 module.exports = {
   createStudyRoom,
   getAllRooms,
   getRoomInfo,
   joinPublicRoom,
   getPublicRoom,
+  updateRoomInfo
 };

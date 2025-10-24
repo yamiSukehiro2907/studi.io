@@ -51,3 +51,29 @@ export const getPublicRooms = async (term: string): Promise<StudyRoom[]> => {
     throw error;
   }
 };
+
+export const updateRoomInfo = async (
+  formData: FormData,
+  roomId: string
+): Promise<StudyRoom> => {
+  try {
+    const response = await api.post(`/rooms/update/${roomId}`, formData, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const deleteRoomDB = async (roomId: string): Promise<void> => {
+  try {
+    await api.post(`/rooms/delete/${roomId}`, {
+      withCredentials: true,
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

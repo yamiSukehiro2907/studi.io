@@ -6,7 +6,9 @@ const {
   getRoomInfo,
   joinPublicRoom,
   getPublicRoom,
+  updateRoomInfo,
 } = require("../controllers/studyroom.controller");
+const upload = require("../config/multer");
 
 const router = express.Router();
 
@@ -20,5 +22,11 @@ router.get("/:id", validate, getRoomInfo);
 
 router.post("/join/:id", validate, joinPublicRoom);
 
+router.post(
+  "/update/:id",
+  validate,
+  upload.single("roomImage"),
+  updateRoomInfo
+);
 
 module.exports = router;

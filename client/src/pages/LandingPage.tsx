@@ -6,8 +6,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 import heroImage from "../assets/study-collabaration.png";
-import { FeatureCard } from "@/components/FeatureCard";
-import { StepCard } from "@/components/StepCard";
+import { FeatureCard } from "@/components/common/FeatureCard";
+import { StepCard } from "@/components/common/StepCard";
 
 export default function LandingPage() {
   return (

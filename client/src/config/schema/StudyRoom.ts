@@ -1,5 +1,9 @@
 export interface Member {
-  user: string;
+  user: {
+    _id: string;
+    name: string;
+    profileImage?: string;
+  };
   isAdmin: boolean;
   _id?: string;
 }
@@ -21,6 +25,7 @@ export interface StudyRoom {
     profileImage?: string;
   };
   members: Member[];
+  roomImage: string;
   whiteboardState?: string;
   resourceHub: Section[];
   createdAt: string;

@@ -1,10 +1,10 @@
 // SettingsPage.tsx
 import { logOut } from "@/api/auth";
-import { AccountModal } from "@/components/AccountModal";
-import { AppearanceModal } from "@/components/AppearanceModal";
-import { NotificationsModal } from "@/components/NotificationsModal";
-import { PrivacyModal } from "@/components/PrivacyModal";
-import { SecurityModal } from "@/components/SecurityModal";
+import { AccountModal } from "@/components/Settings/AccountModal";
+import { AppearanceModal } from "@/components/Settings/AppearanceModal";
+import { NotificationsModal } from "@/components/Settings/NotificationsModal";
+import { PrivacyModal } from "@/components/Settings/PrivacyModal";
+import { SecurityModal } from "@/components/Settings/SecurityModal";
 import { clearUserData } from "@/redux/slices/userSlice";
 import { persistor } from "@/redux/store";
 import { X, User, Lock, Bell, Shield, Palette, LogOut } from "lucide-react";

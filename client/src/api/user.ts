@@ -17,7 +17,6 @@ export const updateUser = async (formData: FormData): Promise<any> => {
     const response = await api.post("/user/update", formData, {
       withCredentials: true,
     });
-    console.log(response.data)
     return response.data;
   } catch (error) {
     console.error(error);

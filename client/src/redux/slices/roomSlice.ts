@@ -78,12 +78,12 @@ const roomSlice = createSlice({
       const room = state.rooms.find((r) => r._id === action.payload.roomId);
       if (room) {
         room.members = room.members.filter(
-          (m) => m.user !== action.payload.userId
+          (m) => m.user._id !== action.payload.userId
         );
       }
       if (state.selectedRoom?._id === action.payload.roomId) {
         state.selectedRoom.members = state.selectedRoom.members.filter(
-          (m) => m.user !== action.payload.userId
+          (m) => m.user._id !== action.payload.userId
         );
       }
     },
