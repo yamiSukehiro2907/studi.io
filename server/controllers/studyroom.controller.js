@@ -67,9 +67,6 @@ const getPublicRoom = async (req, res) => {
       .populate("owner", "name profileImage")
       .populate("members.user", "name profileImage")
       .sort({ createdAt: -1 });
-
-    console.log(rooms);
-    console.log(rooms[0].members);
     return res.status(200).json(rooms);
   } catch (error) {
     console.log("Error fetching public rooms:", error);
