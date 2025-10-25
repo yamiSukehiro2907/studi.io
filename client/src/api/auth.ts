@@ -19,6 +19,7 @@ export const signIn = async (credentials: LoginCredentials): Promise<void> => {
     console.log(response.data);
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -29,11 +30,3 @@ export const logOut = async (): Promise<void> => {
     throw error;
   }
 };
-
-export const refresh = async(): Promise<void> => {
-  try {
-    await api.post("/auth/refresh");
-  } catch (error) {
-    throw error;
-  }
-}

@@ -13,7 +13,6 @@ export const fetchCurrentUser = async (): Promise<User> => {
 
 export const updateUser = async (formData: FormData): Promise<any> => {
   try {
-    
     const response = await api.post("/user/update", formData, {
       withCredentials: true,
     });

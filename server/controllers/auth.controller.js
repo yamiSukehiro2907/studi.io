@@ -159,8 +159,13 @@ const refresh = async (req, res) => {
         }
 
         try {
+
+          console.log(decoded)
+
           let userId = decoded._id;
           let user = await User.findById(userId);
+
+          console.log(user)
 
           if (!user) {
             return res.status(404).json({ message: "User not found" });

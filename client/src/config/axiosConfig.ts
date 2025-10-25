@@ -73,10 +73,20 @@ api.interceptors.response.use(
       const status = error.response.status;
 
       if (status === 401 && !originalRequest._retry) {
+        if (
+          originalRequest.url?.includes("/auth/login") ||
+          originalRequest.url?.includes("/auth/register")
+        ) {
+          return Promise.reject(error);
+        }
+
         if (originalRequest.url?.includes("/auth/refresh")) {
           isRefreshing = false;
           processQueue(error);
-          window.location.href = "/login";
+          localStorage.removeItem("user");
+          if (window.location.pathname !== "/login") {
+            window.location.href = "/login";
+          }
           return Promise.reject(error);
         }
 
@@ -97,7 +107,10 @@ api.interceptors.response.use(
           return api(originalRequest);
         } catch (refreshError) {
           processQueue(refreshError);
-          window.location.href = "/login";
+          localStorage.removeItem("user");
+          if (window.location.pathname !== "/login") {
+            window.location.href = "/login";
+          }
           return Promise.reject(refreshError);
         } finally {
           isRefreshing = false;
@@ -106,7 +119,7 @@ api.interceptors.response.use(
 
       switch (status) {
         case 401:
-          console.error("Unauthorized - redirecting to login");
+          console.error("Unauthorized");
           break;
 
         case 403:
