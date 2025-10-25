@@ -87,7 +87,7 @@ const login = async (req, res) => {
 
     const cookieOptions = {
       httpOnly: true,
-      sameSite: isProduction ? "strict" : "lax",
+      sameSite: isProduction ? "none" : "lax",
       secure: isProduction,
     };
 
