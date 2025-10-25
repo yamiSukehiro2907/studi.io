@@ -13,4 +13,5 @@ const generateRefreshToken = (id) => {
   });
 };
 
-module.exports = { generateAccessToken, generateRefreshToken };
+
+module.exports = { generateAccessToken, generateRefreshToken};

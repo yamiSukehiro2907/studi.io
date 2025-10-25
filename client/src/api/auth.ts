@@ -15,13 +15,12 @@ export const signUp = async (credentials: SignUpCredentials): Promise<void> => {
 
 export const signIn = async (
   credentials: LoginCredentials
-): Promise<Object> => {
+): Promise<void> => {
   try {
     const response = await api.post("/auth/login", credentials);
-    return response.data;
+    console.log(response.data)
   } catch (error) {
     console.error(error);
-    throw error;
   }
 };
 

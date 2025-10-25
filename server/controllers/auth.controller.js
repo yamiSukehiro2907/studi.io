@@ -48,50 +48,66 @@ const signUp = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { identifier, password } = req.body;
+
     if (!identifier || !password) {
       return res
         .status(400)
         .json({ message: "Email and password fields are required" });
     }
+
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password should be at least 6 characters long" });
+    }
+
     let user;
     if (validator.isEmail(identifier)) {
       user = await User.findOne({ email: identifier });
     } else {
       user = await User.findOne({ username: identifier });
     }
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ message: "Password should be at least 6 characters long" });
-    }
+
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
+
     const passwordMatched = await bcrypt.compare(password, user.password);
     if (!passwordMatched) {
-      return res.status(401).json({ message: "Password is incorrect" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
+
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
+
     user.refreshToken = refreshToken;
     await user.save();
-    res.cookie("accessToken", accessToken, {
+
+    const isProduction = process.env.NODE_ENV === "production";
+
+    const cookieOptions = {
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: isProduction ? "strict" : "lax",
+      secure: isProduction,
+    };
+
+    res.cookie("accessToken", accessToken, {
+      ...cookieOptions,
       maxAge: 3600000,
     });
+
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      sameSite: "lax",
+      ...cookieOptions,
       maxAge: 604800000,
     });
+
     return res.status(200).json({
       userId: user._id,
       email: user.email,
       username: user.username,
     });
   } catch (err) {
-    console.log(err);
+    console.error("Login error:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
