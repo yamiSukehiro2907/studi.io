@@ -4,7 +4,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/yamiSukehiro2907/studi.io)](https://github.com/yamiSukehiro2907/studi.io/issues)
 [![GitHub forks](https://img.shields.io/github/forks/yamiSukehiro2907/studi.io?style=social)](https://github.com/yamiSukehiro2907/studi.io/network/members)
 
-**StudyHub** is a modern, interactive web application for creating and joining virtual study rooms. It helps students connect, collaborate, and stay productive in a focused online environment.
+**Studi.io** is a modern, interactive web application for creating and joining virtual study rooms. It helps students connect, collaborate, and stay productive in a focused online environment.
 
 ![Project Screenshot](image.png)
 
@@ -18,9 +18,10 @@
 - **☁️ Cloud Image Uploads** – Room images hosted on [Cloudinary](https://cloudinary.com/).
 - **⚙️ Room Management** – Edit room details anytime via an intuitive modal.
 - **🔔 Real-time Notifications** – Feedback powered by [`react-hot-toast`](https://react-hot-toast.com/).
-- **📱 Responsive Design** – Mobile-first interface using [Tailwind CSS](https://tailwindcss.com/) & [DaisyUI](https://daisyui.com/).
+- **📱 Responsive Design** – Mobile-first interface using [Tailwind CSS](https://tailwindcss.com/)
 - **🔐 Authentication** – Secure JWT-based login system.
-- **📧 Email Service** – Notifications via Gmail using [NodeMailer](https://nodemailer.com/).
+- **📧 Email Service** – Notifications via Gmail using [SendGrid](https://sendgrid.com/en-us).
+- **💬 Real-time Chat** – Text and eventually voice chat within rooms.
 
 ---
 
@@ -28,7 +29,6 @@
 
 - **📝 Whiteboard** – Collaborative real-time note-taking.
 - **🗂️ ResourceHub** – Upload and organize PDFs, links, and study materials.
-- **💬 Real-time Chat** – Text and eventually voice chat within rooms.
 
 ---
 
@@ -36,13 +36,13 @@
 
 | Category           | Technology                                                                                                                     |
 | :----------------- | :----------------------------------------------------------------------------------------------------------------------------- |
-| **Frontend**       | [React](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/), Tailwind CSS, DaisyUI                            |
+| **Frontend**       | [React](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/), Tailwind CSS                                     |
 | **State & UI**     | [React Router](https://reactrouter.com/), [Lucide Icons](https://lucide.dev/), [React Hot Toast](https://react-hot-toast.com/) |
 | **Backend**        | [Node.js](https://nodejs.org/), [Express.js](https://expressjs.com/)                                                           |
 | **Database**       | [MongoDB](https://www.mongodb.com/) with [Mongoose](https://mongoosejs.com/)                                                   |
 | **Authentication** | JWT, bcrypt                                                                                                                    |
 | **File Storage**   | [Cloudinary](https://cloudinary.com/)                                                                                          |
-| **Email Service**  | NodeMailer (Gmail)                                                                                                             |
+| **Email Service**  | [SendGrid](https://sendgrid.com/en-us)                                                                                         |
 
 ---
 
@@ -54,8 +54,7 @@
 - npm or yarn
 - [MongoDB Atlas](https://www.mongodb.com/) cluster
 - [Cloudinary](https://cloudinary.com/) account
-- Gmail account with an [App Password](https://support.google.com/accounts/answer/185833)
-
+- SendGrid account with an [API KEY](https://sendgrid.com/en-us)
 ---
 
 ### Installation
@@ -98,7 +97,7 @@ CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 EMAIL_USER=your_gmail@gmail.com
-EMAIL_PASSWORD=your_16_char_app_password
+SENDGRID_API_KEY=your_sendgrid_api_key
 NODE_ENV=production
 ```
 
@@ -125,7 +124,7 @@ npm run dev
 
 ```bash
 cd client
-npm start
+npm run dev
 ```
 
 ---
@@ -148,7 +147,3 @@ Contributions are welcome! Please follow these steps:
 - **Project Demo:** [https://studiio.netlify.app](https://studiio.netlify.app)
 
 ---
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
