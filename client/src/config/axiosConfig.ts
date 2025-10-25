@@ -9,7 +9,7 @@ const API_BASE_URL =
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
-  timeout: 10000,
+  timeout: 30000,
 });
 
 api.interceptors.request.use(
@@ -51,7 +51,7 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
-      console.log(error)
+      console.log(error);
       const status = error.response.status;
 
       switch (status) {
