@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Users,
   Mail,
   Lock,
   Eye,
@@ -9,7 +8,8 @@ import {
   MessageSquare,
   LayoutDashboard,
 } from "lucide-react";
-import image from "../assets/study-collabaration.png";
+import logoImage from "../assets/logo.png"; 
+import heroImage from "../assets/study-collabaration.png";
 import { signIn } from "@/api/auth";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -80,13 +80,14 @@ export default function LoginPage() {
       <div className="flex flex-col lg:flex-row w-full max-w-6xl mx-auto bg-slate-800 rounded-3xl shadow-2xl overflow-hidden border border-emerald-500/20">
         {/* Left Section - Login Form */}
         <div className="w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 flex flex-col">
-          <div className="mb-8 flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-xl">
-              <Users className="w-8 h-8 text-emerald-500" />
-            </div>
-            <span className="text-3xl font-bold font-mono bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-400 bg-clip-text text-transparent">
-              Studi.io
-            </span>
+          {/* Logo only */}
+          <div className="mb-8">
+            <img
+              src={logoImage}
+              alt="Studi.io Logo"
+              className="object-contain"
+              style={{ width: "200px", height: "auto" }} 
+            />
           </div>
 
           <div className="flex-1">
@@ -161,7 +162,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Emerald Themed Sign In Button */}
+              {/* Sign In Button */}
               <button
                 className="w-full text-base font-semibold mt-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white border-none py-3 shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 cursor-pointer"
                 type="submit"
@@ -193,12 +194,12 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Right Section - Feature Image & Highlights */}
+        {/* Right Section - Hero Image & Features */}
         <div className="hidden lg:flex w-full lg:w-1/2 bg-gradient-to-br from-emerald-500/10 via-emerald-900/20 to-teal-500/10 items-center justify-center p-8 relative overflow-hidden">
           <div className="relative z-10 max-w-sm text-center space-y-6">
             <div className="relative w-full max-w-xs mx-auto mb-8">
               <img
-                src={image}
+                src={heroImage}
                 alt="Students collaborating"
                 className="relative w-full h-auto rounded-3xl shadow-2xl"
               />

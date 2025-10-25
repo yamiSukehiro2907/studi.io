@@ -74,7 +74,7 @@ const login = async (req, res) => {
 
     const passwordMatched = await bcrypt.compare(password, user.password);
     if (!passwordMatched) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Password is incorrect" });
     }
 
     const accessToken = generateAccessToken(user._id);
@@ -160,12 +160,8 @@ const refresh = async (req, res) => {
 
         try {
 
-          console.log(decoded)
-
           let userId = decoded.id;
           let user = await User.findById(userId);
-
-          console.log(user)
 
           if (!user) {
             return res.status(404).json({ message: "User not found" });

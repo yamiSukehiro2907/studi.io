@@ -39,7 +39,6 @@ const updateUser = async (req, res) => {
     if (req.file) {
       try {
         user.profileImage = await uploadprofileImageCloudinary(req.file);
-        console.log("Entered" + user.profileImage)
       } catch (uploadError) {
         return res.status(500).json({
           message: "Failed to upload image",
@@ -65,6 +64,7 @@ const getProfile = async (req, res) => {
     let user = await User.findById(userId).select("-password -refreshToken");
     return res.status(200).json(user);
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

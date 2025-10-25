@@ -142,7 +142,16 @@ function MainContentHeader({
 
   return (
     <div className="px-6 py-4 bg-neutral-900 border-b border-emerald-900/40 flex justify-between items-center shadow-sm sticky top-0 z-20">
-      <div className="flex items-center gap-4 flex-1 min-w-0">
+      <div
+        className="flex items-center gap-4 flex-1 min-w-0"
+        onClick={() => {
+          if (mainContentTab === "info") {
+            setMainContentTab("chat");
+          } else {
+            setMainContentTab("info");
+          }
+        }}
+      >
         <div className="avatar">
           <div className="w-10 h-10 rounded-xl overflow-hidden bg-emerald-950 ring-1 ring-emerald-700/40">
             {roomImage ? (

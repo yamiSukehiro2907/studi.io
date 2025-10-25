@@ -7,7 +7,6 @@ import { getMessagesOfRoom } from "@/api/message";
 import type { Message } from "@/config/schema/Message";
 import { setInitialMessages } from "@/redux/slices/roomSlice";
 import ChatInput from "./ChatInput";
-import bg from "../../assets/bg.jpg";
 
 const ChatPanel: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -57,17 +56,7 @@ const ChatPanel: React.FC = () => {
 
   if (!selectedRoom && !isLoading) {
     return (
-      <div
-        className="flex flex-col h-full text-emerald-400"
-        style={{
-          backgroundImage:
-            "url('https://web.whatsapp.com/img/bg-chat-tile-dark_a4be512e7195b6b733d9110b408f075d.png')",
-          backgroundRepeat: "repeat",
-          backgroundSize: "auto",
-          backgroundPosition: "center",
-          backgroundColor: "#111827",
-        }}
-      >
+      <div className="flex flex-col h-full text-emerald-400 bg-gray-900">
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <p className="text-lg mb-2 text-emerald-500">No room selected</p>
@@ -82,16 +71,7 @@ const ChatPanel: React.FC = () => {
   }
 
   return (
-    <div
-      className="flex flex-col h-full text-emerald-400"
-      style={{
-        backgroundImage: `url(${bg})`,
-        backgroundRepeat: "repeat",
-        backgroundSize: "auto",
-        backgroundPosition: "center",
-        backgroundColor: "#111827",
-      }}
-    >
+    <div className="flex flex-col h-full text-emerald-400 bg-gray-900">
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
         {isLoading && (
           <div className="flex items-center justify-center h-full">

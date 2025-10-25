@@ -21,6 +21,8 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import logo from "./assets/logo.png";
+import TermsOfService from "./pages/TermsOfServicePage";
+import PrivacyPolicy from "./pages/PrivacyPolicyPage";
 
 const AppLayout = () => {
   const { userData } = useSelector((state: RootState) => state.user);
@@ -35,12 +37,13 @@ const AppLayout = () => {
         <div className="flex-1">
           <Link
             to={userData ? "/" : "/welcome"}
-            className="btn btn-ghost text-xl gap-2 "
+            className="flex items-center gap-2"
           >
             <img
               src={logo}
               alt="Studi.io Logo"
-              className="w-30 h-8 object-contain"
+              className="object-contain"
+              style={{ width: "160px", height: "auto" }}
             />
           </Link>
         </div>
@@ -80,6 +83,7 @@ const AppLayout = () => {
           )}
         </div>
       </header>
+
       <main className="flex-1">
         <Outlet />
       </main>
@@ -146,6 +150,9 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>
+
+      <Route path="/terms-of-service" element={<TermsOfService />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
       <Route
         path="*"

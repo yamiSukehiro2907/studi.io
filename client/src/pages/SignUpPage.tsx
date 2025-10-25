@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Users,
   Mail,
   Lock,
   User,
@@ -10,9 +9,10 @@ import {
   MessageSquare,
   LayoutDashboard,
 } from "lucide-react";
+import logoImage from "../assets/logo.png";
 import image from "../assets/study-collabaration.png";
 import { signUp } from "@/api/auth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 
@@ -66,13 +66,14 @@ export default function SignUpPage() {
       <div className="flex flex-col lg:flex-row w-full max-w-6xl mx-auto bg-slate-800 rounded-3xl shadow-2xl overflow-hidden border border-emerald-500/20">
         {/* Left Section */}
         <div className="w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 flex flex-col">
-          <div className="mb-8 flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-xl">
-              <Users className="w-8 h-8 text-emerald-500" />
-            </div>
-            <span className="text-3xl font-bold font-mono bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-400 bg-clip-text text-transparent">
-              Studi.io
-            </span>
+          {/* Logo only */}
+          <div className="mb-8">
+            <img
+              src={logoImage}
+              alt="Studi.io Logo"
+              className="object-contain"
+              style={{ width: "200px", height: "auto" }}
+            />
           </div>
 
           <div className="flex-1">
@@ -80,9 +81,6 @@ export default function SignUpPage() {
               <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                 Create an Account
               </h2>
-              <p className="text-gray-400 text-sm">
-                Join thousands of students collaborating on Studi.io
-              </p>
             </div>
 
             <form className="space-y-5" onSubmit={handleSubmit}>
@@ -193,19 +191,19 @@ export default function SignUpPage() {
                   </div>
                   <span className="text-sm text-gray-300">
                     I agree to the{" "}
-                    <a
-                      href="#"
+                    <Link
+                      to="/terms-of-service"
                       className="text-emerald-400 font-semibold hover:text-emerald-300 hover:underline transition-all"
                     >
                       Terms of Service
-                    </a>{" "}
+                    </Link>{" "}
                     and{" "}
-                    <a
-                      href="#"
+                    <Link
+                      to="/privacy-policy"
                       className="text-emerald-400 font-semibold hover:text-emerald-300 hover:underline transition-all"
                     >
                       Privacy Policy
-                    </a>
+                    </Link>
                   </span>
                 </label>
               </div>
@@ -229,12 +227,12 @@ export default function SignUpPage() {
               <div className="text-center">
                 <p className="text-sm text-gray-400">
                   Already have an account?{" "}
-                  <a
-                    href="/login"
+                  <Link
+                    to="/login"
                     className="text-emerald-400 font-bold hover:text-emerald-300 hover:underline transition-all"
                   >
                     Sign in
-                  </a>
+                  </Link>
                 </p>
               </div>
             </form>

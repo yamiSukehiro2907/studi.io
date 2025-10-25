@@ -8,7 +8,6 @@ const setupSocketHandlers = (io) => {
 
   io.on("connection", (socket) => {
     const userId = socket.user._id;
-    console.log(`User connected: ${socket.user.name} (${userId})`);
 
     socket.on("join-room", async (roomId) => {
       try {
@@ -36,7 +35,6 @@ const setupSocketHandlers = (io) => {
         }
 
         socket.join(roomId);
-        console.log(`${socket.user.name} joined room: ${roomId}`);
 
         socket.to(roomId).emit("user-joined", {
           userId: userId.toString(),
@@ -103,8 +101,6 @@ const setupSocketHandlers = (io) => {
 
     socket.on("leave-room", (roomId) => {
       socket.leave(roomId);
-      console.log(`${socket.user.name} left room: ${roomId}`);
-
       socket.to(roomId).emit("user-left", {
         userId: userId.toString(),
         userName: socket.user.name,
@@ -113,8 +109,6 @@ const setupSocketHandlers = (io) => {
     });
 
     socket.on("disconnect", () => {
-      console.log(`User disconnected: ${socket.user.name} (${userId})`);
-
       const rooms = Array.from(socket.rooms).filter(
         (room) => room !== socket.id
       );

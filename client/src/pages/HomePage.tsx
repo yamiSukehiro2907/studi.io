@@ -49,13 +49,11 @@ export default function HomePage() {
     if (selectedRoom?._id) {
       previousRoomId = selectedRoom._id;
       socket.emit("join-room", selectedRoom._id);
-      console.log(`Emitted join-room for ${selectedRoom._id}`);
     }
 
     return () => {
       if (previousRoomId) {
         socket.emit("leave-room", previousRoomId);
-        console.log(`Emitted leave-room for ${previousRoomId}`);
       }
     };
   }, [selectedRoom]);

@@ -13,11 +13,9 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
 }) => {
   const alignment = isOwnMessage ? "chat-end" : "chat-start";
 
-  // Bubble styles
   const bubbleStyle = isOwnMessage
     ? "bg-emerald-500 text-white px-4 py-2 max-w-xs break-words rounded-tl-xl rounded-tr-xl rounded-bl-xl rounded-br-md"
     : "bg-emerald-200 text-emerald-900 px-4 py-2 max-w-xs break-words rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-md";
-  // <-- changed background for others
 
   const senderName = isOwnMessage
     ? "You"
@@ -49,7 +47,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
 
       {/* Header for others */}
       {!isOwnMessage && (
-        <div className="chat-header opacity-70 text-xs mb-0.5 text-neutral-600">
+        <div className="chat-header opacity-70 text-xs mb-1 text-neutral-600">
           {senderName}
           <time className="ml-2 text-[10px] opacity-50">{time}</time>
         </div>

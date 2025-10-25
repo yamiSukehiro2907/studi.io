@@ -7,14 +7,6 @@ export const socket: Socket = io(SOCKET_URL, {
   withCredentials: true,
 });
 
-socket.on("connect", () => {
-  console.log("Socket connected:", socket.id);
-});
-
-socket.on("disconnect", (reason) => {
-  console.log("Socket disconnected:", reason);
-});
-
 socket.on("connect_error", (error) => {
   console.error("Socket connection error:", error);
 });
