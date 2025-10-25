@@ -12,6 +12,14 @@ const transporter = nodemailer.createTransport({
   socketTimeout: 30000,
 });
 
+transporter.verify(function (error, success) {
+  if (error) {
+    console.log("❌ Email config error:", error);
+  } else {
+    console.log("✅ Email server is ready to send messages");
+  }
+});
+
 const createEmailTemplate = (title, body) => `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
     <h2 style="color: #333; text-align: center;">${title}</h2>
