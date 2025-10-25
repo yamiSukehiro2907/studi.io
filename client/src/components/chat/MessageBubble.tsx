@@ -21,10 +21,13 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
     ? "You"
     : message.sender?.name || message.sender?.username || "Unknown";
 
-  const time = new Date(message.createdAt).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const time = new Date(message.createdAt || Date.now()).toLocaleTimeString(
+    [],
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  );
 
   const profileImage = message.sender?.profileImage;
 

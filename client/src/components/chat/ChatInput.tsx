@@ -47,7 +47,7 @@ const ChatInput: React.FC<any> = () => {
       updatedAt: new Date().toISOString(),
     };
 
-    dispatch(addMessage({ message: newMessage }));
+    dispatch(addMessage({ message: newMessage, currentUserId: userData?._id }));
 
     socket.emit("sendMessage", {
       content: trimmedMessage,
