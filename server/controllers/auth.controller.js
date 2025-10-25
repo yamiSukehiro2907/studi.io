@@ -162,7 +162,7 @@ const refresh = async (req, res) => {
 
           console.log(decoded)
 
-          let userId = decoded._id;
+          let userId = decoded.id;
           let user = await User.findById(userId);
 
           console.log(user)
