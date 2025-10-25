@@ -114,12 +114,34 @@ const roomSlice = createSlice({
       state.messages[action.payload.roomId] = action.payload.messages;
     },
 
-    addMessage: (state, action: PayloadAction<Message>) => {
-      const roomId = action.payload.room;
+    addMessage: (
+      state,
+      action: PayloadAction<{ message: Message; currentUserId?: string }>
+    ) => {
+      const { message, currentUserId } = action.payload;
+      const roomId = message.room;
+
       if (!state.messages[roomId]) {
         state.messages[roomId] = [];
       }
-      state.messages[roomId].push(action.payload);
+
+      if (currentUserId && currentUserId === message.sender._id) {
+        const messages = state.messages[roomId];
+
+        const tempIndex = messages.findIndex(
+          (m) =>
+            m._id?.startsWith("temp-") &&
+            m.sender._id === message.sender._id &&
+            m.content === message.content
+        );
+
+        if (tempIndex !== -1) {
+          messages[tempIndex] = message;
+          return;
+        }
+      }
+
+      state.messages[roomId].push(message);
     },
 
     updateMessage: (

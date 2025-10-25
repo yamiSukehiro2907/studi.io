@@ -66,6 +66,7 @@ export default function HomePage() {
     const loadingToastId = toast.loading("Joining room...");
     try {
       const joinedRoomData = await joinPublicRoom(room._id);
+
       dispatch(addRoom(joinedRoomData));
       dispatch(setSelectedRoom(joinedRoomData));
       setSidebarTab("myRooms");

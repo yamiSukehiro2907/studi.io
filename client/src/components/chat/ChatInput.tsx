@@ -3,43 +3,56 @@ import { Send } from "lucide-react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 import { socket } from "@/config/socket";
+import { useDispatch } from "react-redux";
+import { addMessage } from "@/redux/slices/roomSlice";
+import type { Message } from "@/config/schema/Message";
 
-interface ChatInputProps {
-  onSendMessage?: (content: string) => void;
-}
-
-const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
+const ChatInput: React.FC<any> = () => {
+  const { userData } = useSelector((state: RootState) => state.user);
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const selectedRoom = useSelector(
     (state: RootState) => state.room.selectedRoom
   );
 
-  const isDisabled = !selectedRoom;
+  const dispatch = useDispatch();
 
+  const isDisabled = !selectedRoom;
 
   useEffect(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
     textarea.style.height = "auto";
 
-    const newHeight = Math.min(textarea.scrollHeight, 60); 
+    const newHeight = Math.min(textarea.scrollHeight, 60);
     textarea.style.height = `${newHeight}px`;
   }, [message]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedMessage = message.trim();
-    if (!trimmedMessage) return;
+    if (!trimmedMessage || !selectedRoom) return;
 
-    if (onSendMessage) {
-      onSendMessage(trimmedMessage);
-    } else if (selectedRoom) {
-      socket.emit("sendMessage", {
-        content: trimmedMessage,
-        roomId: selectedRoom._id,
-      });
-    }
+    let newMessage: Message = {
+      _id: `temp-${Date.now()}`,
+      content: trimmedMessage,
+      room: selectedRoom._id,
+      sender: {
+        _id: userData?._id,
+        username: userData?.username,
+        name: userData?.name,
+        profileImage: userData?.profileImage,
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    dispatch(addMessage({ message: newMessage }));
+
+    socket.emit("sendMessage", {
+      content: trimmedMessage,
+      roomId: selectedRoom._id,
+    });
 
     setMessage("");
   };
@@ -67,9 +80,9 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
               leading-snug outline-none
               ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}`}
             style={{
-              paddingLeft: "15px",  // slight right shift for placeholder/content
+              paddingLeft: "15px", // slight right shift for placeholder/content
               paddingRight: "38px", // space for send button inside
-              paddingTop: "14px",    // equal vertical padding
+              paddingTop: "14px", // equal vertical padding
               paddingBottom: "6px",
             }}
             value={message}
@@ -84,7 +97,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
             className={`absolute right-4 top-1/2 transform -translate-y-1/2
               btn btn-sm btn-circle bg-emerald-500 text-white border-none
               hover:bg-emerald-600 transition-transform duration-200
-              ${!message.trim() || isDisabled ? "opacity-60 pointer-events-none" : "hover:scale-105"}`}
+              ${
+                !message.trim() || isDisabled
+                  ? "opacity-60 pointer-events-none"
+                  : "hover:scale-105"
+              }`}
             disabled={!message.trim() || isDisabled}
             title="Send message"
           >
