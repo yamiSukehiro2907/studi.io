@@ -70,14 +70,14 @@ cd studyhub
 2. **Backend Dependencies**
 
 ```bash
-cd backend
+cd server
 npm install
 ```
 
 3. **Frontend Dependencies**
 
 ```bash
-cd ../frontend
+cd ../client
 npm install
 ```
 
@@ -85,7 +85,7 @@ npm install
 
 ### Environment Variables
 
-**Backend (`backend/.env`)**
+**Backend (`server/.env`)**
 
 ```env
 PORT=8000
@@ -99,15 +99,10 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 EMAIL_USER=your_gmail@gmail.com
 EMAIL_PASSWORD=your_16_char_app_password
+NODE_ENV=production
 ```
 
-**Frontend (`frontend/.env`)**
-
-For CRA:
-
-```env
-REACT_APP_API_BASE_URL=http://localhost:8000
-```
+**Frontend (`client/.env`)**
 
 For Vite:
 
@@ -122,14 +117,14 @@ VITE_API_BASE_URL=http://localhost:8000
 **Backend**
 
 ```bash
-cd backend
+cd server
 npm run dev
 ```
 
 **Frontend**
 
 ```bash
-cd frontend
+cd client
 npm start
 ```
 
@@ -150,7 +145,7 @@ Contributions are welcome! Please follow these steps:
 ## 🔗 Links
 
 - **GitHub Repository:** [Studi.io](https://github.com/yamiSukehiro2907/studi.io)
-- **Project Demo:** 
+- **Project Demo:** [https://studiio.netlify.app](https://studiio.netlify.app)
 
 ---
 
