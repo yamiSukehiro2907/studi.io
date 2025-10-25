@@ -4,7 +4,7 @@ const { generateOTP } = require("../constants/otp.generate.js");
 const {
   sendOTPEmailVerification,
   sendOTPForgotPassword,
-} = require("../config/nodemailer.config.js");
+} = require("../config/mail.config.js");
 const sendEmailVerificationOTP = async (req, res) => {
   try {
     const { email } = req.body;
