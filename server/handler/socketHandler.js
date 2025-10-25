@@ -8,6 +8,7 @@ const setupSocketHandlers = (io) => {
 
   io.on("connection", (socket) => {
     const userId = socket.user._id;
+    console.log(`User connected: ${socket.user.name} (${userId})`);
 
     socket.on("join-room", async (roomId) => {
       try {
@@ -35,6 +36,7 @@ const setupSocketHandlers = (io) => {
         }
 
         socket.join(roomId);
+        console.log(`${socket.user.name} joined room: ${roomId}`);
 
         socket.to(roomId).emit("user-joined", {
           userId: userId.toString(),
@@ -90,7 +92,7 @@ const setupSocketHandlers = (io) => {
         });
 
         await newMessage.save();
-        await newMessage.populate("sender", "name profileImage");
+        await newMessage.populate("sender", "name profileImage username");
 
         io.to(roomId).emit("newMessage", newMessage);
       } catch (error) {
@@ -101,6 +103,7 @@ const setupSocketHandlers = (io) => {
 
     socket.on("leave-room", (roomId) => {
       socket.leave(roomId);
+      console.log(`${socket.user.name} left room: ${roomId}`);
 
       socket.to(roomId).emit("user-left", {
         userId: userId.toString(),
@@ -110,6 +113,8 @@ const setupSocketHandlers = (io) => {
     });
 
     socket.on("disconnect", () => {
+      console.log(`User disconnected: ${socket.user.name} (${userId})`);
+
       const rooms = Array.from(socket.rooms).filter(
         (room) => room !== socket.id
       );
@@ -117,11 +122,19 @@ const setupSocketHandlers = (io) => {
       rooms.forEach((roomId) => {
         socket.to(roomId).emit("user-left", {
           userId: userId.toString(),
-          userName: socket.user?.name || "Someone",
+          userName: socket.user?.name || "Unknown User",
           roomId: roomId,
         });
       });
     });
+
+    socket.on("error", (error) => {
+      console.error(`Socket error for user ${socket.user?.name}:`, error);
+    });
+  });
+
+  io.engine.on("connection_error", (err) => {
+    console.error("Connection error:", err);
   });
 };
 

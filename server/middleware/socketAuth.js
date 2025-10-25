@@ -17,7 +17,7 @@ const authenticateSocket = async (socket, next) => {
 
     const decoded = await verifyToken(token, process.env.ACCESS_TOKEN_SECRET);
     const user = await User.findById(decoded.id).select(
-      "_id name email profileImage isVerified"
+      "_id name email profileImage isVerified username"
     );
 
     if (!user) {
