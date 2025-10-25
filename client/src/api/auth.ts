@@ -13,12 +13,10 @@ export const signUp = async (credentials: SignUpCredentials): Promise<void> => {
   }
 };
 
-export const signIn = async (
-  credentials: LoginCredentials
-): Promise<void> => {
+export const signIn = async (credentials: LoginCredentials): Promise<void> => {
   try {
     const response = await api.post("/auth/login", credentials);
-    console.log(response.data)
+    console.log(response.data);
   } catch (error) {
     console.error(error);
   }
@@ -31,3 +29,11 @@ export const logOut = async (): Promise<void> => {
     throw error;
   }
 };
+
+export const refresh = async(): Promise<void> => {
+  try {
+    await api.post("/auth/refresh");
+  } catch (error) {
+    throw error;
+  }
+}

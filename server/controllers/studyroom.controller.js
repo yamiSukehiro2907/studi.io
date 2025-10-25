@@ -210,18 +210,18 @@ const deleteRoom = async (req, res) => {
     if (!room) {
       return res.status(404).json({ message: "Room not found" });
     }
-    const owner = room.owner;
-    if (owner.userId !== userId) {
+
+    if (room.owner.toString() !== userId.toString()) {
       return res
-        .status(401)
+        .status(403)
         .json({ message: "Only owners are allowed to delete the room" });
     }
 
-    await room.findByIdAndDelete(roomId);
+    await StudyRoom.findByIdAndDelete(roomId);
 
     return res.status(200).json({ message: "Room deleted successfully" });
   } catch (error) {
-    console.log("Error fetching room details:", error);
+    console.log("Error deleting room:", error);
     if (error.kind === "ObjectId") {
       return res.status(400).json({ message: "Invalid Room ID format" });
     }
@@ -236,5 +236,5 @@ module.exports = {
   joinPublicRoom,
   getPublicRoom,
   updateRoomInfo,
-  deleteRoom
+  deleteRoom,
 };

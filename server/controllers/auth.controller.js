@@ -29,7 +29,7 @@ const signUp = async (req, res) => {
     }
     let alreadyExists = await User.findOne({ email: email });
     if (alreadyExists) {
-      return res.status(401).json({ message: "Email already in use" });
+      return res.status(409).json({ message: "Email already in use" });
     }
     let hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
@@ -114,28 +114,26 @@ const login = async (req, res) => {
 
 const logOut = async (req, res) => {
   try {
-    let user;
-    if (req.cookies) {
-      const token = req.cookies.accessToken;
-      if (token) {
-        res.clearCookie("accessToken");
-        if (req.cookies.refreshToken) res.clearCookie("refreshToken");
-        jwt.verify(
-          token,
-          process.env.ACCESS_TOKEN_SECRET,
-          async (err, decoded) => {
-            if (decoded) {
-              let id = decoded.id;
-              user = await User.findById(id);
-              if (user) {
-                user.refreshToken = "";
-                await user.save();
-              }
-            }
+    const token = req.cookies?.accessToken;
+
+    if (token) {
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+
+      try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        if (decoded && decoded.id) {
+          const user = await User.findById(decoded.id);
+          if (user) {
+            user.refreshToken = "";
+            await user.save();
           }
-        );
+        }
+      } catch (err) {
+        console.log("Token verification failed during logout:", err);
       }
     }
+
     return res.status(200).json({
       message: "User logged out successfully",
     });
@@ -145,4 +143,65 @@ const logOut = async (req, res) => {
   }
 };
 
-module.exports = { signUp, login, logOut };
+const refresh = async (req, res) => {
+  try {
+    const refreshToken = req.cookies?.refreshToken;
+    if (!refreshToken) {
+      return res.status(400).json({ message: "No refreshToken provided" });
+    }
+
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      async (err, decoded) => {
+        if (err) {
+          return res.status(401).json({ message: "Invalid or expired token" });
+        }
+
+        try {
+          let userId = decoded._id;
+          let user = await User.findById(userId);
+
+          if (!user) {
+            return res.status(404).json({ message: "User not found" });
+          }
+
+          const newAccessToken = generateAccessToken(userId);
+          let newRefreshToken = generateRefreshToken(userId);
+          user.refreshToken = newRefreshToken;
+
+          await user.save();
+          const isProduction = process.env.NODE_ENV === "production";
+
+          const cookieOptions = {
+            httpOnly: true,
+            sameSite: isProduction ? "none" : "lax",
+            secure: isProduction,
+          };
+
+          res.cookie("accessToken", newAccessToken, {
+            ...cookieOptions,
+            maxAge: 3600000,
+          });
+
+          res.cookie("refreshToken", newRefreshToken, {
+            ...cookieOptions,
+            maxAge: 604800000,
+          });
+
+          return res
+            .status(200)
+            .json({ message: "User tokens refreshed successfully" });
+        } catch (error) {
+          console.error("Error in refresh callback:", error);
+          return res.status(500).json({ message: "Internal server error" });
+        }
+      }
+    );
+  } catch (error) {
+    console.error("Error refreshing tokens:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { signUp, login, logOut, refresh };
