@@ -4,13 +4,11 @@ import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/redux/store";
 import { updateUser } from "@/api/user";
 import { setUserData } from "@/redux/slices/userSlice";
-import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 export const AccountModal = () => {
   const { userData } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const [username, setUsername] = useState(userData?.username || "");
   const [email, setEmail] = useState(userData?.email || "");
