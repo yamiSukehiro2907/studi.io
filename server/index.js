@@ -56,6 +56,10 @@ app.use("/otp", require("./routers/otp.route.js"));
 app.use("/rooms", require("./routers/room.route.js"));
 app.use("/messages", require("./routers/message.route.js"));
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
 setupSocketHandlers(io);
 
 server.listen(PORT, async () => {
