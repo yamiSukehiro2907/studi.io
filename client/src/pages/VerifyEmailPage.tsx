@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Users, Mail, KeySquare, CheckCircle } from "lucide-react";
 import { sendEmailOTPVerification, verifyOTP } from "@/api/otp";
 import { useSelector } from "react-redux";
@@ -7,8 +7,10 @@ import type { RootState } from "@/redux/store";
 import toast from "react-hot-toast";
 
 export default function VerifyEmailPage() {
+  const location = useLocation();
+  const mail = location.state?.email || "";
   const { userData } = useSelector((state: RootState) => state.user);
-  const [email, setEmail] = useState(userData?.email || "");
+  const [email, setEmail] = useState(userData?.email || mail);
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -156,6 +158,14 @@ export default function VerifyEmailPage() {
                 {getStepTitle()}
               </h2>
               <p className="text-gray-400 text-sm">{getStepDescription()}</p>
+
+              {/* 👇 Added note for spam/junk folder */}
+              {step === 2 && (
+                <p className="text-xs text-amber-400 mt-2">
+                  ⚠️ If you don’t see the email, please check your spam or junk
+                  folder.
+                </p>
+              )}
             </div>
 
             {step !== 3 && (

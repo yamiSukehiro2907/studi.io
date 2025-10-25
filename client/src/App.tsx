@@ -1,6 +1,12 @@
-import { Routes, Route, Outlet, Navigate, useNavigate } from "react-router-dom";
-import { UsersIcon, User as UserIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Outlet,
+  Navigate,
+  useNavigate,
+  Link,
+} from "react-router-dom";
+import { User as UserIcon } from "lucide-react";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import "./index.css";
@@ -14,27 +20,34 @@ import { persistor, type RootState } from "./redux/store";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
+import logo from "./assets/logo.png";
 
 const AppLayout = () => {
   const { userData } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex flex-col" data-theme="forest">
-      <header className="navbar bg-base-100 shadow-sm sticky top-0 z-50 px-4 lg:px-8">
+    <div
+      className="min-h-screen flex flex-col bg-base-100"
+      data-theme="emerald"
+    >
+      <header className="navbar bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 backdrop-blur-md shadow-md sticky top-0 z-50 px-4 lg:px-8 border-b border-emerald-200/20">
         <div className="flex-1">
           <Link
             to={userData ? "/" : "/welcome"}
-            className="btn btn-ghost text-xl gap-2 hover:bg-transparent"
+            className="btn btn-ghost text-xl gap-2 "
           >
-            <UsersIcon className="size-6 text-primary" />
-            <span className="font-mono font-bold">Studi.io</span>
+            <img
+              src={logo}
+              alt="Studi.io Logo"
+              className="w-30 h-8 object-contain"
+            />
           </Link>
         </div>
         <div className="flex-none">
           {userData ? (
             <div
-              className="w-10 h-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 cursor-pointer hover:ring-offset-4 transition-all"
+              className="w-10 h-10 rounded-full ring ring-emerald-400 ring-offset-base-100 ring-offset-2 cursor-pointer hover:ring-offset-4 transition-all duration-300"
               onClick={() => navigate("/settings")}
             >
               {userData.profileImage ? (
@@ -45,7 +58,7 @@ const AppLayout = () => {
                 />
               ) : (
                 <div className="flex items-center justify-center h-full bg-base-200 rounded-full">
-                  <UserIcon className="size-5 text-base-content" />
+                  <UserIcon className="size-5 text-base-content/70" />
                 </div>
               )}
             </div>
@@ -53,13 +66,13 @@ const AppLayout = () => {
             <div className="flex items-center gap-3">
               <Link
                 to="/login"
-                className="btn btn-ghost btn-sm sm:btn-md normal-case font-semibold"
+                className="btn btn-ghost btn-sm sm:btn-md normal-case font-semibold hover:text-emerald-600 transition-all"
               >
                 Sign In
               </Link>
               <Link
                 to="/signup"
-                className="btn btn-primary btn-sm sm:btn-md normal-case font-semibold shadow-lg"
+                className="btn bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 btn-sm sm:btn-md normal-case font-semibold text-white shadow-lg hover:shadow-emerald-500/30 transition-all duration-300"
               >
                 Sign Up
               </Link>
@@ -102,22 +115,20 @@ function App() {
           localStorage.clear();
           navigate("/login");
         }
-      } else {
-        console.log("No persisted user, skipping session validation.");
       }
       setIsLoading(false);
     };
-
     validateSession();
   }, []);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-base-300">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
+      <div className="min-h-screen flex items-center justify-center bg-base-200">
+        <span className="loading loading-spinner loading-lg text-emerald-500"></span>
       </div>
     );
   }
+
   return (
     <Routes>
       <Route element={<LoggedOutRoute />}>

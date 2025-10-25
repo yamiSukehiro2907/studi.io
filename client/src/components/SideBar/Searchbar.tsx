@@ -1,4 +1,5 @@
 import { Search } from "lucide-react";
+import React from "react";
 
 export function SearchBar({
   searchQuery,
@@ -10,7 +11,7 @@ export function SearchBar({
   sidebarTab: "myRooms" | "findRooms";
 }) {
   return (
-    <div className="p-4 border-b border-base-300 flex-shrink-0 relative">
+    <div className="p-4 flex-shrink-0 relative bg-neutral-950 border-b border-neutral-800 rounded-lg">
       <input
         type="text"
         placeholder={
@@ -18,11 +19,11 @@ export function SearchBar({
             ? "Search your rooms..."
             : "Search public rooms..."
         }
-        className="input input-bordered w-full h-10 pl-10"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full h-10 pl-10 pr-3 bg-neutral-900 text-neutral-100 placeholder-neutral-500 border border-neutral-800 rounded-lg focus:border-emerald-500 outline-none transition-all duration-150"
       />
-      <Search className="size-5 absolute left-7 top-1/2 transform -translate-y-1/2 text-base-content/40 pointer-events-none" />
+      <Search className="size-5 absolute left-7 top-1/2 transform -translate-y-1/2 text-neutral-500 pointer-events-none" />
     </div>
   );
 }

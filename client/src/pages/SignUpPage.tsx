@@ -44,8 +44,7 @@ export default function SignUpPage() {
       toast.success("Account created successfully! Please log in.", {
         id: loadingToastId,
       });
-
-      navigate("/verify-email");
+      navigate("/verify-email", { state: { email: signupData.email } });
     } catch (error: any) {
       console.error("Signup error:", error);
       let errorMessage = "Signup failed. Please try again.";
@@ -65,6 +64,7 @@ export default function SignUpPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950">
       <div className="flex flex-col lg:flex-row w-full max-w-6xl mx-auto bg-slate-800 rounded-3xl shadow-2xl overflow-hidden border border-emerald-500/20">
+        {/* Left Section */}
         <div className="w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 flex flex-col">
           <div className="mb-8 flex items-center gap-3">
             <div className="p-2.5 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-xl">
@@ -85,7 +85,8 @@ export default function SignUpPage() {
               </p>
             </div>
 
-            <div className="space-y-5">
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              {/* Full Name */}
               <div>
                 <label className="block mb-2">
                   <span className="font-semibold text-sm flex items-center gap-2 text-gray-300">
@@ -105,6 +106,7 @@ export default function SignUpPage() {
                 />
               </div>
 
+              {/* Email */}
               <div>
                 <label className="block mb-2">
                   <span className="font-semibold text-sm flex items-center gap-2 text-gray-300">
@@ -124,6 +126,7 @@ export default function SignUpPage() {
                 />
               </div>
 
+              {/* Password */}
               <div>
                 <label className="block mb-2">
                   <span className="font-semibold text-sm flex items-center gap-2 text-gray-300">
@@ -161,6 +164,7 @@ export default function SignUpPage() {
                 </div>
               </div>
 
+              {/* Terms */}
               <div>
                 <label className="flex items-start gap-3 py-3 px-1 cursor-pointer">
                   <div className="relative mt-0.5">
@@ -191,14 +195,14 @@ export default function SignUpPage() {
                     I agree to the{" "}
                     <a
                       href="#"
-                      className="text-emerald-500 font-semibold hover:underline transition-all"
+                      className="text-emerald-400 font-semibold hover:text-emerald-300 hover:underline transition-all"
                     >
                       Terms of Service
                     </a>{" "}
                     and{" "}
                     <a
                       href="#"
-                      className="text-emerald-500 font-semibold hover:underline transition-all"
+                      className="text-emerald-400 font-semibold hover:text-emerald-300 hover:underline transition-all"
                     >
                       Privacy Policy
                     </a>
@@ -206,35 +210,38 @@ export default function SignUpPage() {
                 </label>
               </div>
 
+              {/* Submit Button */}
               <button
-                className="w-full text-base shadow-lg font-semibold mt-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-none py-3 transition-colors cursor-pointer"
+                className="w-full text-base font-semibold mt-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white border-none py-3 shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 cursor-pointer"
                 type="submit"
-                onClick={handleSubmit}
               >
                 Create Account
               </button>
 
+              {/* Divider */}
               <div className="flex items-center gap-4 my-6">
                 <div className="flex-1 h-px bg-gray-700"></div>
                 <span className="text-xs text-gray-500">OR</span>
                 <div className="flex-1 h-px bg-gray-700"></div>
               </div>
 
+              {/* Login Link */}
               <div className="text-center">
                 <p className="text-sm text-gray-400">
                   Already have an account?{" "}
                   <a
                     href="/login"
-                    className="text-emerald-500 font-bold hover:underline transition-all"
+                    className="text-emerald-400 font-bold hover:text-emerald-300 hover:underline transition-all"
                   >
                     Sign in
                   </a>
                 </p>
               </div>
-            </div>
+            </form>
           </div>
         </div>
 
+        {/* Right Section (Features) */}
         <div className="hidden lg:flex w-full lg:w-1/2 bg-gradient-to-br from-emerald-500/10 via-emerald-900/20 to-teal-500/10 items-center justify-center p-8 relative overflow-hidden">
           <div className="relative z-10 max-w-sm text-center space-y-6">
             <div className="relative w-full max-w-xs mx-auto mb-8">

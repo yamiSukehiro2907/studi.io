@@ -26,21 +26,23 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Overlay */}
       <div
-        className="fixed inset-0 bg-black/50 z-50 animate-in fade-in duration-150"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 animate-in fade-in duration-150"
         onClick={onCancel}
       />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div
-          className="bg-base-100 rounded-xl shadow-xl w-full max-w-sm pointer-events-auto animate-in zoom-in-95 duration-150"
+          className="bg-base-100 rounded-2xl shadow-2xl border border-emerald-300/40 w-full max-w-sm animate-in zoom-in-95 duration-200"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-base-300">
-            <h3 className="text-lg font-semibold">{heading}</h3>
+          <div className="flex items-center justify-between px-4 py-3 border-b border-base-300/50 bg-gradient-to-r from-emerald-500/10 to-teal-500/10">
+            <h3 className="text-lg font-semibold text-emerald-700">
+              {heading}
+            </h3>
             <button
               className="btn btn-ghost btn-sm btn-circle"
               onClick={onCancel}
@@ -51,7 +53,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           </div>
 
           {/* Body */}
-          <div className="px-5 py-4 space-y-3 text-center">
+          <div className="px-5 py-5 text-center space-y-3">
             <AlertTriangle className="mx-auto text-warning size-8" />
             {description && (
               <p className="text-sm text-base-content/70">{description}</p>
@@ -59,16 +61,16 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="flex gap-3 px-5 py-3 border-t border-base-300">
+          <div className="flex gap-3 px-5 py-4 border-t border-base-300/50">
             <button
-              className="btn btn-ghost flex-1"
+              className="btn btn-ghost flex-1 hover:text-emerald-600"
               onClick={onCancel}
               disabled={isProcessing}
             >
               {cancelText}
             </button>
             <button
-              className="btn btn-error flex-1"
+              className="btn bg-gradient-to-r from-emerald-500 to-teal-500 text-white flex-1 hover:from-emerald-400 hover:to-teal-400 shadow-md hover:shadow-emerald-500/30 transition-all"
               onClick={onConfirm}
               disabled={isProcessing}
             >

@@ -7,12 +7,15 @@ const {
   joinPublicRoom,
   getPublicRoom,
   updateRoomInfo,
+  deleteRoom,
 } = require("../controllers/studyroom.controller");
 const upload = require("../config/multer");
 
 const router = express.Router();
 
 router.post("/create", validate, createStudyRoom);
+
+router.delete("/:id" , validate , deleteRoom)
 
 router.get("/", validate, getAllRooms);
 

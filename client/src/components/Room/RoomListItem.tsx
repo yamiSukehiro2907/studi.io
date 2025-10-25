@@ -24,16 +24,17 @@ export const RoomListItem = ({
 
   return (
     <div
-      className={`p-4 flex items-center gap-4 cursor-pointer border-l-4 transition-all duration-150 ${
-        isSelected
-          ? "bg-base-300 border-primary"
-          : "border-transparent hover:bg-base-200"
-      }`}
+      className={`p-4 flex items-center gap-4 cursor-pointer border-l-4 transition-all duration-150 rounded-r-lg
+        ${
+          isSelected
+            ? "bg-neutral-900 border-emerald-500"
+            : "border-transparent hover:bg-neutral-950"
+        }`}
       onClick={onClick}
     >
       {/* Room Image or Placeholder */}
       <div className="avatar flex-shrink-0">
-        <div className="w-12 h-12 rounded-xl overflow-hidden ring-1 ring-base-300 bg-base-300">
+        <div className="w-12 h-12 rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800">
           {room.roomImage ? (
             <img
               src={room.roomImage}
@@ -41,10 +42,8 @@ export const RoomListItem = ({
               className="object-cover w-full h-full"
             />
           ) : (
-            <div className="flex items-center justify-center w-full h-full bg-primary/20 text-primary-content">
-              <span className="text-sm font-semibold">
-                {roomName.substring(0, 2).toUpperCase()}
-              </span>
+            <div className="flex items-center justify-center w-full h-full bg-neutral-800 text-emerald-500 font-semibold">
+              {roomName.substring(0, 2).toUpperCase()}
             </div>
           )}
         </div>
@@ -53,14 +52,18 @@ export const RoomListItem = ({
       {/* Room Info */}
       <div className="flex-1 overflow-hidden">
         <div className="flex items-center gap-2">
-          <h3 className="font-semibold truncate text-base-content">
+          <h3
+            className={`font-semibold truncate ${
+              isSelected ? "text-emerald-400" : "text-neutral-100"
+            }`}
+          >
             {roomName}
           </h3>
           {room.isPrivate && (
-            <span className="badge badge-sm badge-ghost text-xs">Private</span>
+            <span className="text-xs text-neutral-400/70">Private</span>
           )}
         </div>
-        <p className="text-sm text-base-content/70 truncate">
+        <p className="text-sm truncate text-neutral-400/70">
           {getLastMessage()} • {getOwnerName()}
         </p>
       </div>

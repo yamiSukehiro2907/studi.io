@@ -1,8 +1,8 @@
 export const NotificationsModal = () => {
   return (
-    <div className="space-y-6 relative">
+    <div className="space-y-6 relative bg-gray-900 p-6 rounded-xl shadow-md">
       {/* Coming Soon Banner */}
-      <div className="alert alert-info">
+      <div className="alert alert-info bg-gray-800 text-emerald-400 border-emerald-500 shadow-sm">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -22,90 +22,62 @@ export const NotificationsModal = () => {
       </div>
 
       <div>
-        <h4 className="text-2xl font-bold mb-2">Notification Preferences</h4>
-        <p className="text-base-content/70">
+        <h4 className="text-2xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400">
+          Notification Preferences
+        </h4>
+        <p className="text-gray-400 text-base">
           Choose how you want to be notified about activities
         </p>
       </div>
 
-      <div className="divider"></div>
+      <div className="divider border-gray-700"></div>
 
       {/* Disabled overlay effect */}
       <div className="space-y-4 opacity-60 pointer-events-none select-none">
-        <div className="form-control bg-base-200 p-4 rounded-lg">
-          <label className="label cursor-pointer justify-between">
-            <div className="flex flex-col items-start">
-              <span className="label-text font-semibold text-base">
-                Email Notifications
-              </span>
-              <span className="label-text-alt text-base-content/60 mt-1">
-                Receive notifications via email
-              </span>
-            </div>
-            <input
-              type="checkbox"
-              className="toggle toggle-primary toggle-lg"
-              defaultChecked
-              disabled
-            />
-          </label>
-        </div>
-
-        <div className="form-control bg-base-200 p-4 rounded-lg">
-          <label className="label cursor-pointer justify-between">
-            <div className="flex flex-col items-start">
-              <span className="label-text font-semibold text-base">
-                Push Notifications
-              </span>
-              <span className="label-text-alt text-base-content/60 mt-1">
-                Get push notifications on your device
-              </span>
-            </div>
-            <input
-              type="checkbox"
-              className="toggle toggle-primary toggle-lg"
-              defaultChecked
-              disabled
-            />
-          </label>
-        </div>
-
-        <div className="form-control bg-base-200 p-4 rounded-lg">
-          <label className="label cursor-pointer justify-between">
-            <div className="flex flex-col items-start">
-              <span className="label-text font-semibold text-base">
-                Message Notifications
-              </span>
-              <span className="label-text-alt text-base-content/60 mt-1">
-                Get notified when someone messages you
-              </span>
-            </div>
-            <input
-              type="checkbox"
-              className="toggle toggle-primary toggle-lg"
-              defaultChecked
-              disabled
-            />
-          </label>
-        </div>
-
-        <div className="form-control bg-base-200 p-4 rounded-lg">
-          <label className="label cursor-pointer justify-between">
-            <div className="flex flex-col items-start">
-              <span className="label-text font-semibold text-base">
-                Comment Notifications
-              </span>
-              <span className="label-text-alt text-base-content/60 mt-1">
-                Get notified about new comments
-              </span>
-            </div>
-            <input
-              type="checkbox"
-              className="toggle toggle-primary toggle-lg"
-              disabled
-            />
-          </label>
-        </div>
+        {[
+          {
+            title: "Email Notifications",
+            desc: "Receive notifications via email",
+            checked: true,
+          },
+          {
+            title: "Push Notifications",
+            desc: "Get push notifications on your device",
+            checked: true,
+          },
+          {
+            title: "Message Notifications",
+            desc: "Get notified when someone messages you",
+            checked: true,
+          },
+          {
+            title: "Comment Notifications",
+            desc: "Get notified about new comments",
+            checked: false,
+          },
+        ].map((notif, idx) => (
+          <div
+            key={idx}
+            className="form-control bg-gray-800 p-4 rounded-lg border border-gray-700"
+          >
+            <label className="label cursor-pointer justify-between">
+              <div className="flex flex-col items-start">
+                <span className="label-text font-semibold text-emerald-400">
+                  {notif.title}
+                </span>
+                <span className="label-text-alt text-gray-400 mt-1">
+                  {notif.desc}
+                </span>
+              </div>
+              <input
+                type="checkbox"
+                className="toggle toggle-emerald toggle-lg"
+                defaultChecked={notif.checked}
+                disabled
+              />
+            </label>
+          </div>
+        ))}
       </div>
     </div>
   );

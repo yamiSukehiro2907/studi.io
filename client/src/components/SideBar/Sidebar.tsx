@@ -72,7 +72,7 @@ export function Sidebar({
     sidebarTab === "myRooms" ? isLoadingMyRooms : isSearching;
 
   return (
-    <div className="w-full md:w-[350px] lg:w-[400px] flex flex-col bg-base-100 flex-shrink-0 border-r border-base-300">
+    <div className="w-full md:w-[350px] lg:w-[400px] flex flex-col bg-neutral-950 flex-shrink-0 border-r border-emerald-800/20">
       <SidebarHeader onCreateRoom={onCreateRoom} />
 
       <SidebarTabs sidebarTab={sidebarTab} setSidebarTab={setSidebarTab} />

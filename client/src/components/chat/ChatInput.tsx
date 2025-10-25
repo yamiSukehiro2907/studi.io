@@ -17,12 +17,14 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
 
   const isDisabled = !selectedRoom;
 
-  // Auto-resize textarea height
+
   useEffect(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
     textarea.style.height = "auto";
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`;
+
+    const newHeight = Math.min(textarea.scrollHeight, 60); 
+    textarea.style.height = `${newHeight}px`;
   }, [message]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -37,8 +39,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         content: trimmedMessage,
         roomId: selectedRoom._id,
       });
-    } else {
-      console.warn("Cannot send message: No room selected.");
     }
 
     setMessage("");
@@ -52,11 +52,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="p-4 bg-base-100 border-t border-base-300"
-    >
-      <div className="flex items-end gap-2">
+    <form onSubmit={handleSubmit} className="p-2 bg-neutral-950">
+      <div className="flex items-center">
         <div className="flex-1 relative">
           <textarea
             ref={textareaRef}
@@ -65,23 +62,29 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
                 ? "Select a room to start chatting..."
                 : "Type a message..."
             }
-            className={`pt-2 pl-2 textarea textarea-bordered w-full resize-none min-h-[42px] max-h-[120px] rounded-xl pr-12 leading-relaxed ${
-              isDisabled ? "opacity-60 cursor-not-allowed" : ""
-            }`}
+            className={`w-full resize-none min-h-[36px] max-h-[60px] rounded-full
+              bg-neutral-900 text-white placeholder:text-neutral-500
+              leading-snug outline-none
+              ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}`}
+            style={{
+              paddingLeft: "15px",  // slight right shift for placeholder/content
+              paddingRight: "38px", // space for send button inside
+              paddingTop: "14px",    // equal vertical padding
+              paddingBottom: "6px",
+            }}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isDisabled}
           />
 
-          {/* Send button (inside input) */}
+          {/* Send button inside input box */}
           <button
             type="submit"
-            className={`absolute right-2 bottom-2 btn btn-sm btn-circle btn-primary transition-transform duration-200 ${
-              !message.trim() || isDisabled
-                ? "opacity-60 pointer-events-none"
-                : "hover:scale-105"
-            }`}
+            className={`absolute right-4 top-1/2 transform -translate-y-1/2
+              btn btn-sm btn-circle bg-emerald-500 text-white border-none
+              hover:bg-emerald-600 transition-transform duration-200
+              ${!message.trim() || isDisabled ? "opacity-60 pointer-events-none" : "hover:scale-105"}`}
             disabled={!message.trim() || isDisabled}
             title="Send message"
           >

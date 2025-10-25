@@ -75,32 +75,28 @@ export const AccountModal = () => {
   const displayImage = imagePreview || userData?.profileImage;
 
   return (
-    <div className="max-w-5xl mx-auto p-8 space-y-10">
-      {/* Header Section */}
+    <div className="max-w-5xl mx-auto p-8 space-y-10 bg-gray-900 text-gray-100">
+      {/* Header */}
       <div className="space-y-3">
-        <h4 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+        <h4 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400">
           Account Settings
         </h4>
       </div>
 
-      {/* Profile Image Section */}
-      <div className="card bg-base-200/50 shadow-md hover:shadow-lg transition-all duration-300 border border-base-300">
+      {/* Profile Image */}
+      <div className="card bg-gray-800/70 shadow-md transition-all duration-300 border border-gray-700">
         <div className="card-body p-8">
-          <h5 className="card-title text-xl mb-6 font-semibold">
+          <h5 className="card-title text-xl mb-6 font-semibold text-emerald-400">
             Profile Picture
           </h5>
           <div className="flex items-center gap-8">
             <div className="avatar">
-              <div className="w-28 h-28 rounded-full ring ring-primary ring-offset-base-100 ring-offset-3 shadow-xl hover:shadow-2xl transition-all duration-300">
+              <div className="w-28 h-28 rounded-full ring ring-emerald-500/40 ring-offset-gray-900 ring-offset-2 shadow-md transition-all duration-300">
                 {displayImage ? (
-                  <img
-                    src={displayImage}
-                    alt="Profile"
-                    className="object-cover"
-                  />
+                  <img src={displayImage} alt="Profile" className="object-cover" />
                 ) : (
-                  <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20">
-                    <Camera className="size-12 text-primary" />
+                  <div className="flex items-center justify-center w-full h-full bg-gray-700">
+                    <Camera className="size-12 text-emerald-400" />
                   </div>
                 )}
               </div>
@@ -109,7 +105,7 @@ export const AccountModal = () => {
             <div className="flex flex-col gap-3">
               <label
                 htmlFor="profile-upload"
-                className="btn btn-primary gap-2 shadow-md hover:shadow-lg transition-all duration-300"
+                className="btn btn-emerald gap-2 shadow-sm hover:shadow-md transition-all duration-300"
               >
                 <Camera className="size-4" />
                 {displayImage ? "Change Photo" : "Upload Photo"}
@@ -122,7 +118,7 @@ export const AccountModal = () => {
                 className="hidden"
                 disabled={loading}
               />
-              <p className="text-sm text-base-content/60">
+              <p className="text-sm text-gray-400">
                 JPG, PNG, GIF or WebP • Max 2MB
               </p>
             </div>
@@ -130,111 +126,58 @@ export const AccountModal = () => {
         </div>
       </div>
 
+      {/* User Info */}
       <div className="space-y-7">
-        {/* Full Name */}
         <div className="form-control">
           <label className="label pb-2 gap-4">
-            <span className="label-text font-semibold text-base">
-              Full Name
-            </span>
-            <input
-              type="text"
-              placeholder="Enter your full name"
-              className="w-full pl-4 pr-12 h-12 rounded-xl "
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              disabled={loading}
-            />
+            <span className="label-text font-semibold text-emerald-400 text-base">Full Name</span>
           </label>
-        </div>
-        <div className="form-control">
-          <label className="label pb-2 gap-4">
-            <span className="label-text font-semibold text-base">Username</span>
-            <input
-              type="text"
-              placeholder="Enter username"
-              className="w-full pl-4 pr-12 h-12 rounded-xl "
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              disabled={loading}
-            />
-          </label>
-        </div>
-
-        {/* Email */}
-        <div className="form-control">
-          <label className="label pb-2">
-            <span className="label-text font-semibold text-base">
-              Email Address
-            </span>
-          </label>
-          <div className="flex items-center gap-[10px]">
-            <input
-              type="email"
-              placeholder="Enter email"
-              className="w-full pl-4 pr-12 h-12 rounded-xl "
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-            />
-            {userData?.isVerified && (
-              <span className="badge badge-success badge-md gap-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-3.5 w-3.5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Verified
-              </span>
-            )}
-          </div>
-          {!userData?.isVerified && (
-            <div className="flex items-center justify-between mt-2">
-              <label className="label pt-0">
-                <span className="label-text-alt text-warning flex items-center gap-1.5">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Email not verified yet
-                </span>
-              </label>
-              <button
-                type="button"
-                className="btn btn-sm btn-warning"
-                onClick={() => {
-                  navigate("/verify-email");
-                }}
-              >
-                Verify Email
-              </button>
-            </div>
-          )}
+          <input
+            type="text"
+            placeholder="Enter your full name"
+            className="w-full pl-4 pr-12 h-12 rounded-xl bg-gray-800 border border-emerald-500 text-gray-100 shadow-sm"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            disabled={loading}
+          />
         </div>
 
         <div className="form-control">
           <label className="label pb-2 gap-4">
-            <span className="label-text font-semibold text-base">Bio</span>
+            <span className="label-text font-semibold text-emerald-400 text-base">Username</span>
           </label>
-          <div className="mt-2">
+          <input
+            type="text"
+            placeholder="Enter username"
+            className="w-full pl-4 pr-12 h-12 rounded-xl bg-gray-800 border border-emerald-500 text-gray-100 shadow-sm"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            disabled={loading}
+          />
+        </div>
+
+        <div className="form-control">
+          <label className="label pb-2 gap-4">
+            <span className="label-text font-semibold text-emerald-400 text-base">Email Address</span>
+          </label>
+          <input
+            type="email"
+            placeholder="Enter email"
+            className="w-full pl-4 pr-12 h-12 rounded-xl bg-gray-800 border border-emerald-500 text-gray-100 shadow-sm"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
+          />
+        </div>
+
+        <div className="form-control">
+          <label className="label pb-2 gap-4">
+            <span className="label-text font-semibold text-emerald-400 text-base">Bio</span>
+          </label>
+          <div className="mt-4">
             <textarea
               placeholder="Tell us about yourself..."
-              className="pt-2 pl-4 pr-12 textarea textarea-bordered textarea-lg focus:textarea-primary h-5 resize-none transition-all duration-200 leading-relaxed rounded-xl"
+              className="pt-2 pl-4 pr-12 textarea textarea-bordered textarea-lg h-5 resize-none rounded-xl bg-gray-800 border border-emerald-500 text-gray-100 shadow-sm"
               value={bio}
               onChange={(e) => setBio(e.target.value.slice(0, 50))}
               disabled={loading}
@@ -247,7 +190,7 @@ export const AccountModal = () => {
       {/* Save Button */}
       <div className="flex justify-end pt-6">
         <button
-          className="btn py-3 px-6 h-auto rounded-xl shadow-md font-semibold text-base transition-all duration-200 hover:shadow-lg hover:scale-[1.02] bg-blue-500 hover:bg-blue-600 text-white border-blue-500"
+          className="btn py-3 px-6 h-auto rounded-xl shadow-sm font-semibold text-base transition-all duration-200 hover:shadow-md hover:scale-[1.02] bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-600"
           onClick={handleSaveChanges}
           disabled={loading}
         >

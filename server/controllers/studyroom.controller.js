@@ -92,7 +92,7 @@ const getRoomInfo = async (req, res) => {
     if (!isMember) {
       return res.status(403).json({ message: "Access denied: Not a member" });
     }
-    console.log(room)
+    console.log(room);
 
     return res.status(200).json(room);
   } catch (error) {
@@ -201,11 +201,40 @@ const updateRoomInfo = async (req, res) => {
   }
 };
 
+const deleteRoom = async (req, res) => {
+  try {
+    const roomId = req.params.id;
+    const userId = req.user._id;
+
+    const room = await StudyRoom.findById(roomId);
+    if (!room) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+    const owner = room.owner;
+    if (owner.userId !== userId) {
+      return res
+        .status(401)
+        .json({ message: "Only owners are allowed to delete the room" });
+    }
+
+    await room.findByIdAndDelete(roomId);
+
+    return res.status(200).json({ message: "Room deleted successfully" });
+  } catch (error) {
+    console.log("Error fetching room details:", error);
+    if (error.kind === "ObjectId") {
+      return res.status(400).json({ message: "Invalid Room ID format" });
+    }
+    return res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
 module.exports = {
   createStudyRoom,
   getAllRooms,
   getRoomInfo,
   joinPublicRoom,
   getPublicRoom,
-  updateRoomInfo
+  updateRoomInfo,
+  deleteRoom
 };

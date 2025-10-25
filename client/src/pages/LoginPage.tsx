@@ -24,7 +24,7 @@ export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (!loginData.identifier || !loginData.password) {
       toast.error("Please enter email/username and password.");
@@ -39,20 +39,16 @@ export default function LoginPage() {
       });
 
       const response = await fetchCurrentUser();
-
       dispatch(setUserData(response));
 
       toast.success("Logged in successfully!", { id: loadingToastId });
 
-      setLoginData({
-        identifier: "",
-        password: "",
-      });
+      setLoginData({ identifier: "", password: "" });
 
       setTimeout(() => {
         navigate("/", { replace: true });
       }, 100);
-    } catch (error: any) {
+    } catch (error) {
       let errorMessage = "Login failed. Please check your credentials.";
 
       if (error instanceof AxiosError) {
@@ -72,6 +68,7 @@ export default function LoginPage() {
       console.error("Login error:", error);
     }
   };
+
   const features = [
     { text: "Dynamic Shared Whiteboards", icon: Lightbulb },
     { text: "Real-time Collaborative Chat", icon: MessageSquare },
@@ -81,6 +78,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950">
       <div className="flex flex-col lg:flex-row w-full max-w-6xl mx-auto bg-slate-800 rounded-3xl shadow-2xl overflow-hidden border border-emerald-500/20">
+        {/* Left Section - Login Form */}
         <div className="w-full lg:w-1/2 p-6 sm:p-10 lg:p-12 flex flex-col">
           <div className="mb-8 flex items-center gap-3">
             <div className="p-2.5 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-xl">
@@ -102,6 +100,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-5">
+              {/* Email or Username */}
               <div>
                 <label className="block mb-2">
                   <span className="font-semibold text-sm flex items-center gap-2 text-gray-300">
@@ -121,6 +120,7 @@ export default function LoginPage() {
                 />
               </div>
 
+              {/* Password */}
               <div>
                 <label className="block mb-2">
                   <span className="font-semibold text-sm flex items-center gap-2 text-gray-300">
@@ -161,20 +161,23 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              {/* Emerald Themed Sign In Button */}
               <button
-                className="w-full text-base shadow-lg font-semibold mt-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white border-none py-3 transition-colors cursor-pointer"
+                className="w-full text-base font-semibold mt-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white border-none py-3 shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 cursor-pointer"
                 type="submit"
                 onClick={handleSubmit}
               >
                 Sign In
               </button>
 
+              {/* Divider */}
               <div className="flex items-center gap-4 my-6">
                 <div className="flex-1 h-px bg-gray-700"></div>
                 <span className="text-xs text-gray-500">OR</span>
                 <div className="flex-1 h-px bg-gray-700"></div>
               </div>
 
+              {/* Create Account */}
               <div className="text-center">
                 <p className="text-sm text-gray-400">
                   Don't have an account?{" "}
@@ -190,6 +193,7 @@ export default function LoginPage() {
           </div>
         </div>
 
+        {/* Right Section - Feature Image & Highlights */}
         <div className="hidden lg:flex w-full lg:w-1/2 bg-gradient-to-br from-emerald-500/10 via-emerald-900/20 to-teal-500/10 items-center justify-center p-8 relative overflow-hidden">
           <div className="relative z-10 max-w-sm text-center space-y-6">
             <div className="relative w-full max-w-xs mx-auto mb-8">

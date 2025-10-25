@@ -38,14 +38,11 @@ export const SecurityModal = () => {
     }
 
     setIsLoading(true);
-
     const loadingToastId = toast.loading("Changing password...");
 
     try {
       await changePassword2(currentPassword, newPassword);
-
       toast.success("Password changed successfully!", { id: loadingToastId });
-
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -53,28 +50,38 @@ export const SecurityModal = () => {
       const errorMessage =
         err.response?.data?.message ||
         "Failed to change password. Please check your current password.";
-
       setError(errorMessage);
-
       toast.error(errorMessage, { id: loadingToastId });
     } finally {
       setIsLoading(false);
     }
   };
 
+  const inputClass =
+    "w-full pl-4 pr-12 h-12 bg-gray-800 border border-emerald-500 text-gray-100 rounded-xl placeholder-gray-400 focus:border-emerald-400 focus:bg-gray-700 transition-all duration-200 outline-none";
+
+  const btnClass =
+    "btn py-3 px-6 h-auto rounded-xl shadow-sm font-semibold text-base transition-all duration-200 hover:shadow-md hover:scale-[1.02] bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-600";
+
   return (
-    <form onSubmit={handleOnSubmit} className="space-y-6">
+    <form
+      onSubmit={handleOnSubmit}
+      className="space-y-6 bg-gray-900 p-6 rounded-xl shadow-md"
+    >
+      {/* Header */}
       <div>
-        <h4 className="text-2xl font-bold mb-2">Security Settings</h4>
-        <p className="text-base-content/70">
+        <h4 className="text-2xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400">
+          Security Settings
+        </h4>
+        <p className="text-gray-400 text-base">
           Keep your account secure with a strong password
         </p>
       </div>
 
-      <div className="divider"></div>
+      <div className="divider border-gray-700"></div>
 
       {error && (
-        <div className="alert alert-error">
+        <div className="alert alert-error bg-red-800 text-red-200 border-red-600 shadow-sm">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="stroke-current shrink-0 h-6 w-6"
@@ -92,9 +99,10 @@ export const SecurityModal = () => {
         </div>
       )}
 
+      {/* Current Password */}
       <div className="form-control">
         <label className="label pb-2 gap-4">
-          <span className="label-text font-semibold text-base">
+          <span className="label-text font-semibold text-base text-emerald-400">
             Current Password
           </span>
         </label>
@@ -102,14 +110,14 @@ export const SecurityModal = () => {
           <input
             type={showCurrentPassword ? "text" : "password"}
             placeholder="Enter current password"
-            className="w-full pl-4 pr-12 h-12 bg-slate-700/50 border-2 border-slate-600 focus:border-emerald-500 focus:bg-slate-700 transition-all duration-200 rounded-xl text-white placeholder-gray-500 outline-none"
+            className={inputClass}
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             required
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-emerald-500 transition-colors"
+            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-emerald-400 transition-colors"
             onClick={() => setShowCurrentPassword(!showCurrentPassword)}
           >
             {showCurrentPassword ? (
@@ -121,9 +129,10 @@ export const SecurityModal = () => {
         </div>
       </div>
 
+      {/* New Password */}
       <div className="form-control">
         <label className="label pb-2 gap-4">
-          <span className="label-text font-semibold text-base">
+          <span className="label-text font-semibold text-base text-emerald-400">
             New Password
           </span>
         </label>
@@ -131,7 +140,7 @@ export const SecurityModal = () => {
           <input
             type={showNewPassword ? "text" : "password"}
             placeholder="Enter new password"
-            className="w-full pl-4 pr-12 h-12 bg-slate-700/50 border-2 border-slate-600 focus:border-emerald-500 focus:bg-slate-700 transition-all duration-200 rounded-xl text-white placeholder-gray-500 outline-none"
+            className={inputClass}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             disabled={isLoading}
@@ -140,7 +149,7 @@ export const SecurityModal = () => {
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-emerald-500 transition-colors"
+            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-emerald-400 transition-colors"
             onClick={() => setShowNewPassword(!showNewPassword)}
           >
             {showNewPassword ? (
@@ -151,15 +160,16 @@ export const SecurityModal = () => {
           </button>
         </div>
         <label className="label">
-          <span className="label-text-alt pt-2 text-base-content/60">
+          <span className="label-text-alt text-gray-400">
             Must be at least 6 characters long
           </span>
         </label>
       </div>
 
+      {/* Confirm Password */}
       <div className="form-control">
         <label className="label pb-2 gap-4">
-          <span className="label-text font-semibold text-base">
+          <span className="label-text font-semibold text-base text-emerald-400">
             Confirm New Password
           </span>
         </label>
@@ -167,7 +177,7 @@ export const SecurityModal = () => {
           <input
             type={showConfirmPassword ? "text" : "password"}
             placeholder="Confirm new password"
-            className="w-full pl-4 pr-12 h-12 bg-slate-700/50 border-2 border-slate-600 focus:border-emerald-500 focus:bg-slate-700 transition-all duration-200 rounded-xl text-white placeholder-gray-500 outline-none"
+            className={inputClass}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             disabled={isLoading}
@@ -175,7 +185,7 @@ export const SecurityModal = () => {
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-emerald-500 transition-colors"
+            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-emerald-400 transition-colors"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             tabIndex={-1}
           >
@@ -188,11 +198,8 @@ export const SecurityModal = () => {
         </div>
       </div>
 
-      <button
-        type="submit"
-        className="btn py-3 px-6 h-auto rounded-xl shadow-md font-semibold text-base transition-all duration-200 hover:shadow-lg hover:scale-[1.02] bg-blue-500 hover:bg-blue-600 text-white border-blue-500"
-        disabled={isLoading}
-      >
+      {/* Submit Button */}
+      <button type="submit" className={btnClass} disabled={isLoading}>
         {isLoading ? (
           <>
             <span className="loading loading-spinner loading-sm mr-2"></span>{" "}

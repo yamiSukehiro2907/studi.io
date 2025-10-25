@@ -33,6 +33,10 @@ export const joinPublicRoom = async (roomId: string): Promise<StudyRoom> => {
     const response = await api.post(`/rooms/join/${roomId}`, {
       withCredentials: true,
     });
+
+    if (response.data?.message === "You are already a member") {
+      throw new Error("You are already a member");
+    }
     return response.data.room;
   } catch (error) {
     console.error(error);
@@ -69,7 +73,7 @@ export const updateRoomInfo = async (
 
 export const deleteRoomDB = async (roomId: string): Promise<void> => {
   try {
-    await api.post(`/rooms/delete/${roomId}`, {
+    await api.delete(`/rooms/${roomId}`, {
       withCredentials: true,
     });
   } catch (error) {

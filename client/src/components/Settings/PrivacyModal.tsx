@@ -1,8 +1,8 @@
 export const PrivacyModal = () => {
   return (
-    <div className="space-y-6 relative">
+    <div className="space-y-6 relative bg-gray-900 p-6 rounded-xl shadow-md">
       {/* Coming Soon Banner */}
-      <div className="alert alert-info">
+      <div className="alert alert-info bg-gray-800 text-emerald-400 border-emerald-500 shadow-sm">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -22,67 +22,75 @@ export const PrivacyModal = () => {
       </div>
 
       <div>
-        <h4 className="text-2xl font-bold mb-2">Privacy Settings</h4>
-        <p className="text-base-content/70">
+        <h4 className="text-2xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400">
+          Privacy Settings
+        </h4>
+        <p className="text-gray-400 text-base">
           Control who can see your information and activities
         </p>
       </div>
 
-      <div className="divider"></div>
+      <div className="divider border-gray-700"></div>
 
       {/* Disabled content */}
       <div className="space-y-6 opacity-60 pointer-events-none select-none">
         <div className="form-control">
           <label className="label">
-            <span className="label-text font-semibold text-base">
+            <span className="label-text font-semibold text-emerald-400 text-base">
               Profile Visibility
             </span>
           </label>
-          <select className="select select-bordered w-full" disabled>
+          <select
+            className="select select-bordered w-full bg-gray-800 border-gray-700 text-white"
+            disabled
+          >
             <option>Public - Anyone can view your profile</option>
             <option>Friends Only - Only friends can view</option>
             <option>Private - Only you can view</option>
           </select>
         </div>
 
-        <div className="form-control bg-base-200 p-4 rounded-lg">
+        <div className="form-control bg-gray-800 p-4 rounded-lg border border-gray-700">
           <label className="label cursor-pointer justify-between">
             <div className="flex flex-col items-start">
-              <span className="label-text font-semibold text-base">
+              <span className="label-text font-semibold text-emerald-400">
                 Show Email
               </span>
-              <span className="label-text-alt text-base-content/60 mt-1">
+              <span className="label-text-alt text-gray-400 mt-1">
                 Display your email on your profile
               </span>
             </div>
             <input
               type="checkbox"
-              className="toggle toggle-primary toggle-lg"
+              className="toggle toggle-emerald toggle-lg"
               disabled
             />
           </label>
         </div>
 
-        <div className="form-control bg-base-200 p-4 rounded-lg">
+        <div className="form-control bg-gray-800 p-4 rounded-lg border border-gray-700">
           <label className="label cursor-pointer justify-between">
             <div className="flex flex-col items-start">
-              <span className="label-text font-semibold text-base">
+              <span className="label-text font-semibold text-emerald-400">
                 Show Activity Status
               </span>
-              <span className="label-text-alt text-base-content/60 mt-1">
+              <span className="label-text-alt text-gray-400 mt-1">
                 Let others see when you're active
               </span>
             </div>
             <input
               type="checkbox"
-              className="toggle toggle-primary toggle-lg"
+              className="toggle toggle-emerald toggle-lg"
               defaultChecked
               disabled
             />
           </label>
         </div>
 
-        <button className="btn btn-primary px-8" disabled>
+        <button
+          className="btn bg-emerald-500 hover:bg-emerald-600 text-white border-emerald-500 px-8 rounded-xl shadow-md disabled:opacity-50"
+          disabled
+        >
           Save Changes
         </button>
       </div>

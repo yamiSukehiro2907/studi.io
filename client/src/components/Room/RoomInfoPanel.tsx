@@ -14,33 +14,33 @@ export const RoomInfoPanel = ({
   const canEdit = isOwner || isAdmin;
 
   return (
-    <div className="p-6 h-full overflow-y-auto space-y-8 bg-base-100">
-      {/* --- Description Card --- */}
-      <div className="card bg-base-200 shadow-sm rounded-xl p-5">
-        <h4 className="font-semibold text-base-content/80 mb-2 flex items-center gap-2">
+    <div className="p-6 h-full overflow-y-auto space-y-8 bg-neutral-950">
+      {/* --- Description --- */}
+      <div className="bg-neutral-900 rounded-xl border border-emerald-800/40 p-5">
+        <h4 className="font-semibold text-emerald-500 mb-2 flex items-center gap-2">
           📝 Description
         </h4>
-        <p className="text-sm text-base-content/70 leading-relaxed">
+        <p className="text-sm text-emerald-400/70 leading-relaxed">
           {room.description || (
-            <span className="italic text-base-content/50">
+            <span className="italic text-emerald-400/50">
               No description provided.
             </span>
           )}
         </p>
       </div>
 
-      {/* --- Owner Card --- */}
-      <div className="card bg-base-200 shadow-sm rounded-xl p-5">
-        <h4 className="font-semibold text-base-content/80 mb-3 flex items-center gap-2">
+      {/* --- Owner --- */}
+      <div className="bg-neutral-900 rounded-xl border border-emerald-800/40 p-5">
+        <h4 className="font-semibold text-emerald-500 mb-3 flex items-center gap-2">
           👑 Owner
         </h4>
-        <div className="flex items-center gap-4 p-3 bg-base-100 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+        <div className="flex items-center gap-4 p-3 bg-neutral-950 rounded-lg border border-emerald-800/40 hover:bg-neutral-900/50 transition-colors">
           <div className="avatar">
-            <div className="w-10 rounded-full ring ring-warning ring-offset-base-100 ring-offset-2">
+            <div className="w-10 rounded-full ring ring-emerald-600/50 ring-offset-neutral-950 ring-offset-2">
               {room.owner.profileImage ? (
                 <img src={room.owner.profileImage} alt={room.owner.name} />
               ) : (
-                <div className="flex items-center justify-center h-full w-full bg-neutral text-neutral-content">
+                <div className="flex items-center justify-center h-full w-full bg-neutral-900 text-emerald-500">
                   <span className="text-sm font-semibold">
                     {room.owner.name?.[0]?.toUpperCase() || <User size={14} />}
                   </span>
@@ -49,20 +49,20 @@ export const RoomInfoPanel = ({
             </div>
           </div>
           <div className="flex flex-col">
-            <span className="font-medium text-base-content">
+            <span className="font-medium text-emerald-500">
               {room.owner.name}
             </span>
-            <span className="text-xs text-base-content/60">Room Owner</span>
+            <span className="text-xs text-emerald-400/70">Room Owner</span>
           </div>
-          <Crown className="ml-auto text-warning size-5" />
+          <Crown className="ml-auto text-emerald-500 size-5" />
         </div>
       </div>
 
-      {/* --- Members List --- */}
-      <div className="card bg-base-200 shadow-sm rounded-xl p-5">
+      {/* --- Members --- */}
+      <div className="bg-neutral-900 rounded-xl border border-emerald-800/40 p-5">
         <div className="flex items-center justify-between mb-3">
-          <h4 className="font-semibold text-base-content/80 flex items-center gap-2">
-            <Users className="size-4 text-primary" />
+          <h4 className="font-semibold text-emerald-500 flex items-center gap-2">
+            <Users className="size-4 text-emerald-500" />
             Members ({room.members.length})
           </h4>
         </div>
@@ -76,22 +76,21 @@ export const RoomInfoPanel = ({
             return (
               <li
                 key={member._id}
-                className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-150 border border-transparent hover:border-base-300 ${
+                className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                   isCurrentUser
-                    ? "bg-primary/10 border-primary/20"
-                    : "bg-base-100 hover:bg-base-200"
+                    ? "bg-emerald-800/10 border-emerald-600/30"
+                    : "bg-neutral-950 border-emerald-800/40 hover:bg-neutral-900/50"
                 }`}
               >
-                {/* Avatar */}
                 <div className="avatar">
-                  <div className="w-9 rounded-full">
+                  <div className="w-9 rounded-full overflow-hidden">
                     {member.user.profileImage ? (
                       <img
                         src={member.user.profileImage}
                         alt={member.user.name}
                       />
                     ) : (
-                      <div className="flex items-center justify-center h-full w-full bg-neutral text-neutral-content">
+                      <div className="flex items-center justify-center h-full w-full bg-neutral-900 text-emerald-500">
                         <span className="text-sm font-semibold">
                           {member.user.name?.[0]?.toUpperCase() || (
                             <User size={14} />
@@ -102,42 +101,41 @@ export const RoomInfoPanel = ({
                   </div>
                 </div>
 
-                {/* Member Info */}
                 <div className="flex flex-col">
                   <span
                     className={`font-medium flex items-center gap-1 ${
-                      isCurrentUser ? "text-primary" : "text-base-content"
+                      isCurrentUser ? "text-emerald-500" : "text-emerald-400"
                     }`}
                   >
                     {member.user.name}
                     {isCurrentUser && (
-                      <span className="text-xs text-primary/70 font-medium">
+                      <span className="text-xs text-emerald-500/70 font-medium">
                         (You)
                       </span>
                     )}
                   </span>
 
                   {isMemberOwner && (
-                    <span className="text-xs text-warning font-medium">
+                    <span className="text-xs text-emerald-500 font-medium">
                       Owner
                     </span>
                   )}
                   {isMemberAdmin && (
-                    <span className="text-xs text-info font-medium">Admin</span>
+                    <span className="text-xs text-emerald-400 font-medium">
+                      Admin
+                    </span>
                   )}
                 </div>
 
-                {/* Role Icons */}
                 {isMemberOwner && (
-                  <Crown className="size-4 text-warning ml-auto" />
+                  <Crown className="size-4 text-emerald-500 ml-auto" />
                 )}
                 {isMemberAdmin && (
-                  <ShieldCheck className="size-4 text-info ml-auto" />
+                  <ShieldCheck className="size-4 text-emerald-400 ml-auto" />
                 )}
 
-                {/* Context Menu Placeholder */}
                 {canEdit && member.user._id !== userId && (
-                  <button className="btn btn-xs btn-ghost ml-auto px-2">
+                  <button className="btn btn-xs btn-ghost ml-auto px-2 text-emerald-400 hover:text-emerald-500">
                     ...
                   </button>
                 )}
