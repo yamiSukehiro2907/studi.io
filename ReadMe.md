@@ -21,6 +21,7 @@
 - **📱 Responsive Design** – Mobile-first interface using [Tailwind CSS](https://tailwindcss.com/) & [DaisyUI](https://daisyui.com/).
 - **🔐 Authentication** – Secure JWT-based login system.
 - **📧 Email Service** – Notifications via Gmail using [NodeMailer](https://nodemailer.com/).
+- **💬 Real-time Chat** – Text and eventually voice chat within rooms.
 
 ---
 
@@ -28,7 +29,6 @@
 
 - **📝 Whiteboard** – Collaborative real-time note-taking.
 - **🗂️ ResourceHub** – Upload and organize PDFs, links, and study materials.
-- **💬 Real-time Chat** – Text and eventually voice chat within rooms.
 
 ---
 
@@ -42,7 +42,7 @@
 | **Database**       | [MongoDB](https://www.mongodb.com/) with [Mongoose](https://mongoosejs.com/)                                                   |
 | **Authentication** | JWT, bcrypt                                                                                                                    |
 | **File Storage**   | [Cloudinary](https://cloudinary.com/)                                                                                          |
-| **Email Service**  | NodeMailer (Gmail)                                                                                                             |
+| **Email Service**  | [SendGrid](https://sendgrid.com/en-us)                                                                                         |
 
 ---
 
@@ -54,8 +54,7 @@
 - npm or yarn
 - [MongoDB Atlas](https://www.mongodb.com/) cluster
 - [Cloudinary](https://cloudinary.com/) account
-- Gmail account with an [App Password](https://support.google.com/accounts/answer/185833)
-
+- SendGrid account with an [API KEY](https://sendgrid.com/en-us)
 ---
 
 ### Installation
@@ -98,7 +97,7 @@ CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 EMAIL_USER=your_gmail@gmail.com
-EMAIL_PASSWORD=your_16_char_app_password
+SENDGRID_API_KEY=your_sendgrid_api_key
 NODE_ENV=production
 ```
 
@@ -148,7 +147,3 @@ Contributions are welcome! Please follow these steps:
 - **Project Demo:** [https://studiio.netlify.app](https://studiio.netlify.app)
 
 ---
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
