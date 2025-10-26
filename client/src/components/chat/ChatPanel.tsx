@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import MessageBubble from "./MessageBubble";
 import type { RootState } from "@/redux/store";
-import { useSocketMessages } from "@/hooks/useSocketMessages";
 import { getMessagesOfRoom } from "@/api/message";
 import type { Message } from "@/config/schema/Message";
 import { setInitialMessages } from "@/redux/slices/roomSlice";
@@ -13,8 +12,6 @@ const ChatPanel: React.FC = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useSocketMessages();
 
   const selectedRoom = useSelector(
     (state: RootState) => state.room.selectedRoom

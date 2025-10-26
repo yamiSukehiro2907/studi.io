@@ -8,7 +8,7 @@ import {
   MessageSquare,
   LayoutDashboard,
 } from "lucide-react";
-import logoImage from "../assets/logo.png"; 
+import logoImage from "../assets/logo.png";
 import heroImage from "../assets/study-collabaration.png";
 import { signIn } from "@/api/auth";
 import { useDispatch } from "react-redux";
@@ -53,12 +53,16 @@ export default function LoginPage() {
 
       if (error instanceof AxiosError) {
         if (
-          error.response?.status === 409 &&
+          error.response?.status === 403 &&
           error.response?.data?.message === "Please verify your email first"
         ) {
           errorMessage = "Please verify your email first.";
           toast.error(errorMessage, { id: loadingToastId });
-          navigate("/verify-email");
+          navigate("/verify-email", {
+            state: {
+              email: isEmail(loginData.identifier) ? loginData.identifier : "",
+            },
+          });
           return;
         } else if (error.response?.data?.message) {
           errorMessage = error.response.data.message;
@@ -67,6 +71,23 @@ export default function LoginPage() {
       toast.error(errorMessage, { id: loadingToastId });
       console.error("Login error:", error);
     }
+  };
+
+  const isEmail = (email: string): boolean => {
+    if (!email || typeof email !== "string") {
+      return false;
+    }
+
+    const trimmedEmail = email.trim();
+
+    if (trimmedEmail.length === 0 || trimmedEmail.length > 254) {
+      return false;
+    }
+
+    const emailRegex =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+    return emailRegex.test(trimmedEmail);
   };
 
   const features = [
@@ -86,7 +107,7 @@ export default function LoginPage() {
               src={logoImage}
               alt="Studi.io Logo"
               className="object-contain"
-              style={{ width: "200px", height: "auto" }} 
+              style={{ width: "200px", height: "auto" }}
             />
           </div>
 

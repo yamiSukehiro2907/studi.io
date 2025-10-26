@@ -101,7 +101,6 @@ const setupSocketHandlers = (io) => {
 
         await newMessage.save();
         await newMessage.populate("sender", "name profileImage username");
-
         io.to(roomId).emit("newMessage", newMessage);
       } catch (error) {
         console.error("Error saving/sending message:", error);
@@ -111,14 +110,14 @@ const setupSocketHandlers = (io) => {
 
     socket.on("drawing", (data) => {
       const { roomId, payload } = data;
-
       if (!roomId || !payload) return;
-
-      socket.to(roomId).emit("drawing", payload);
+      socket.to(roomId).emit("drawing", { roomId: roomId, payload: payload });
     });
 
     socket.on("save-whiteboard-state", async (data) => {
-      const { roomId, state } = state;
+      const { roomId, state } = data;
+
+      console.log("State recieved" + state);
       const userId = socket.user._id;
 
       if (!roomId || state === undefined) return;
@@ -137,8 +136,9 @@ const setupSocketHandlers = (io) => {
         const isAdmin = memberInfo?.isAdmin || false;
 
         if (isOwner || isAdmin) {
-          await StudyRoom.findByIdAndDelete(roomId, { whiteboardState: state });
-          socket.to(roomId).emit("whiteboard-state-saved");
+          await StudyRoom.findByIdAndUpdate(roomId, { whiteboardState: state });
+          let updatedRoom = await StudyRoom.findById(roomId);
+          console.log("Updated state: " + updatedRoom.whiteboardState);
         } else {
           socket.emit("error", {
             message: "Only owner/admin are can save whiteboard state",
