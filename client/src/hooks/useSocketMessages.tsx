@@ -4,6 +4,7 @@ import { addMessage } from "@/redux/slices/roomSlice";
 import { socket } from "@/config/socket";
 import type { RootState } from "@/redux/store";
 import type { Message } from "@/config/schema/Message";
+import toast from "react-hot-toast";
 
 export const useSocketMessages = () => {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ export const useSocketMessages = () => {
     };
 
     const handleMessageError = (error: { message: string }) => {
-      console.error("Message error:", error.message);
+      toast.error(error.message);
     };
 
     const handleUserJoined = () => {};
@@ -48,26 +49,25 @@ export const useSocketMessages = () => {
   useEffect(() => {
     const newRoomId = selectedRoom?._id;
 
-    if (newRoomId && newRoomId !== currentRoomIdRef.current) {
+    if (newRoomId !== currentRoomIdRef.current) {
       if (currentRoomIdRef.current) {
-        console.log("Leaving previous room:", currentRoomIdRef.current);
         socket.emit("leave-room", currentRoomIdRef.current);
       }
 
-      console.log("Joining new room:", newRoomId);
-      socket.emit("join-room", newRoomId);
-      currentRoomIdRef.current = newRoomId;
+      if (newRoomId) {
+        socket.emit("join-room", newRoomId);
+        currentRoomIdRef.current = newRoomId;
+      } else {
+        currentRoomIdRef.current = null;
+      }
     }
   }, [selectedRoom?._id]);
 
   useEffect(() => {
     return () => {
       if (currentRoomIdRef.current) {
-        console.log(
-          "Component unmounting: Leaving room:",
-          currentRoomIdRef.current
-        );
         socket.emit("leave-room", currentRoomIdRef.current);
+        currentRoomIdRef.current = null;
       }
     };
   }, []);
