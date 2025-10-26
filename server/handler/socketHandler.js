@@ -42,6 +42,16 @@ const setupSocketHandlers = (io) => {
           userProfileImage: socket.user.profileImage,
           roomId: roomId,
         });
+
+        const roomWhiteBoardState = await StudyRoom.findById(roomId)
+          .select("whiteboardState")
+          .lean();
+        if (roomWhiteBoardState && roomWhiteBoardState.whiteboardState) {
+          socket.emit(
+            "load-whiteboard-state",
+            roomWhiteBoardState.whiteboardState
+          );
+        }
       } catch (error) {
         console.error("Error joining room:", error);
         socket.emit("error", { message: "Failed to join room" });
@@ -96,6 +106,50 @@ const setupSocketHandlers = (io) => {
       } catch (error) {
         console.error("Error saving/sending message:", error);
         socket.emit("messageError", { message: "Failed to send message" });
+      }
+    });
+
+    socket.on("drawing", (data) => {
+      const { roomId, payload } = data;
+
+      if (!roomId || !payload) return;
+
+      socket.to(roomId).emit("drawing", payload);
+    });
+
+    socket.on("save-whiteboard-state", async (data) => {
+      const { roomId, state } = state;
+      const userId = socket.user._id;
+
+      if (!roomId || state === undefined) return;
+
+      try {
+        const room = await StudyRoom.findOne({
+          _id: roomId,
+          "members.user": userId,
+        }).select("owner members");
+
+        if (!room) return;
+
+        const memberInfo = room.members.find((m) => m.user.equals(userId));
+
+        const isOwner = room.owner.equals(userId);
+        const isAdmin = memberInfo?.isAdmin || false;
+
+        if (isOwner || isAdmin) {
+          await StudyRoom.findByIdAndDelete(roomId, { whiteboardState: state });
+          socket.to(roomId).emit("whiteboard-state-saved");
+        } else {
+          socket.emit("error", {
+            message: "Only owner/admin are can save whiteboard state",
+          });
+        }
+      } catch (error) {
+        console.error(
+          `Error saving whiteboard state for room ${roomId}:`,
+          error
+        );
+        socket.emit("error", { message: "Failed to save whiteboard state." });
       }
     });
 
