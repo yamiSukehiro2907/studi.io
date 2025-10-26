@@ -16,7 +16,9 @@ const setupSocketHandlers = (io) => {
           return;
         }
 
-        const room = await StudyRoom.findById(roomId).select("members");
+        const room = await StudyRoom.findById(roomId).select(
+          "members whiteboardState"
+        );
 
         if (!room) {
           socket.emit("error", { message: "Room not found" });
@@ -43,18 +45,78 @@ const setupSocketHandlers = (io) => {
           roomId: roomId,
         });
 
-        const roomWhiteBoardState = await StudyRoom.findById(roomId)
-          .select("whiteboardState")
-          .lean();
-        if (roomWhiteBoardState && roomWhiteBoardState.whiteboardState) {
-          socket.emit(
-            "load-whiteboard-state",
-            roomWhiteBoardState.whiteboardState
-          );
+        if (room.whiteboardState && room.whiteboardState.trim() !== "") {
+          socket.emit("load-whiteboard-state", room.whiteboardState);
         }
       } catch (error) {
         console.error("Error joining room:", error);
         socket.emit("error", { message: "Failed to join room" });
+      }
+    });
+
+    socket.on("get-whiteboard-state", async (data) => {
+      try {
+        const { roomId } = data;
+        if (!roomId) return;
+        const room = await StudyRoom.findById(roomId);
+        if (room && room.whiteboardState) {
+          socket.emit("load-whiteboard-state", room.whiteboardState);
+        } else {
+          socket.emit("load-whiteboard-state", "");
+        }
+      } catch (error) {
+        console.error("Failed to get whiteboard state:", error);
+      }
+    });
+    socket.on("drawing", async (data) => {
+      const { roomId, payload } = data;
+      if (!roomId || !payload) return;
+
+      try {
+        socket.to(roomId).emit("drawing", { roomId: roomId, payload: payload });
+
+        const room = await StudyRoom.findById(roomId);
+        if (!room) return;
+
+        let canvasState;
+        if (room.whiteboardState && room.whiteboardState.trim() !== "") {
+          try {
+            canvasState = JSON.parse(room.whiteboardState);
+          } catch {
+            canvasState = { version: "6.7.1", objects: [] };
+          }
+        } else {
+          canvasState = { version: "6.7.1", objects: [] };
+        }
+
+        if (!canvasState.objects) {
+          canvasState.objects = [];
+        }
+
+        canvasState.objects.push(payload);
+
+        room.whiteboardState = JSON.stringify(canvasState);
+        await room.save();
+
+      } catch (error) {
+        console.error("Error saving drawing:", error);
+      }
+    });
+
+    socket.on("clear-whiteboard", async (data) => {
+      const { roomId } = data;
+      if (!roomId) return;
+
+      try {
+        const room = await StudyRoom.findById(roomId);
+        if (!room) return;
+
+        room.whiteboardState = "";
+        await room.save();
+
+        io.to(roomId).emit("clear-whiteboard");
+      } catch (error) {
+        console.error("Error clearing whiteboard:", error);
       }
     });
 
@@ -105,51 +167,6 @@ const setupSocketHandlers = (io) => {
       } catch (error) {
         console.error("Error saving/sending message:", error);
         socket.emit("messageError", { message: "Failed to send message" });
-      }
-    });
-
-    socket.on("drawing", (data) => {
-      const { roomId, payload } = data;
-      if (!roomId || !payload) return;
-      socket.to(roomId).emit("drawing", { roomId: roomId, payload: payload });
-    });
-
-    socket.on("save-whiteboard-state", async (data) => {
-      const { roomId, state } = data;
-
-      console.log("State recieved" + state);
-      const userId = socket.user._id;
-
-      if (!roomId || state === undefined) return;
-
-      try {
-        const room = await StudyRoom.findOne({
-          _id: roomId,
-          "members.user": userId,
-        }).select("owner members");
-
-        if (!room) return;
-
-        const memberInfo = room.members.find((m) => m.user.equals(userId));
-
-        const isOwner = room.owner.equals(userId);
-        const isAdmin = memberInfo?.isAdmin || false;
-
-        if (isOwner || isAdmin) {
-          await StudyRoom.findByIdAndUpdate(roomId, { whiteboardState: state });
-          let updatedRoom = await StudyRoom.findById(roomId);
-          console.log("Updated state: " + updatedRoom.whiteboardState);
-        } else {
-          socket.emit("error", {
-            message: "Only owner/admin are can save whiteboard state",
-          });
-        }
-      } catch (error) {
-        console.error(
-          `Error saving whiteboard state for room ${roomId}:`,
-          error
-        );
-        socket.emit("error", { message: "Failed to save whiteboard state." });
       }
     });
 
