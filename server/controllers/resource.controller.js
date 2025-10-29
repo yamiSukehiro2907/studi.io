@@ -30,4 +30,9 @@ const addResource = async (req, res) => {
   }
 };
 
-module.exports = { addResource };
+const getAllResources = async (req, res) => {
+  const resources = req.section.resources;
+  return res.status(200).json(resources);
+};
+
+module.exports = { addResource, getAllResources };

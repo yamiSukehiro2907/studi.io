@@ -46,4 +46,35 @@ const getSections = async (req, res) => {
   return res.status(200).json(sections);
 };
 
-module.exports = { addSection , getSections};
+const updateSection = async (req, res) => {
+  try {
+    const sectionId = req.params.sectionId;
+
+    const { title } = req.body;
+
+    if (!title || title.trim() === "") {
+      return res.status(400).json({ message: "Title is required" });
+    }
+
+    const room = req.room;
+
+    const section = room.resourceHub.find((st) => st._id.equals(sectionId));
+
+    if (!section) {
+      return res.status(404).json({ message: "Section not founf" });
+    }
+    section.title = title;
+
+    await room.save();
+
+    const updatedSection = room.resourceHub.find((st) =>
+      st._id.equals(sectionId)
+    );
+    return res.status(200).json(updatedSection);
+  } catch (error) {
+    console.error("Error updating the resources: ", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { addSection, getSections, updateSection };
