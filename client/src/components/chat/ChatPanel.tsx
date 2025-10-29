@@ -2,11 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import MessageBubble from "./MessageBubble";
 import type { RootState } from "@/redux/store";
-import { useSocketMessages } from "@/hooks/useSocketMessages";
 import { getMessagesOfRoom } from "@/api/message";
 import type { Message } from "@/config/schema/Message";
 import { setInitialMessages } from "@/redux/slices/roomSlice";
 import ChatInput from "./ChatInput";
+
+const EMPTY_MESSAGES: Message[] = [];
 
 const ChatPanel: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -14,13 +15,13 @@ const ChatPanel: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useSocketMessages();
-
   const selectedRoom = useSelector(
     (state: RootState) => state.room.selectedRoom
   );
   const messages: Message[] = useSelector((state: RootState) =>
-    selectedRoom ? state.room.messages[selectedRoom._id] || [] : []
+    selectedRoom
+      ? state.room.messages[selectedRoom._id] || EMPTY_MESSAGES
+      : EMPTY_MESSAGES
   );
   const { userData } = useSelector((state: RootState) => state.user);
 
@@ -38,7 +39,6 @@ const ChatPanel: React.FC = () => {
             })
           );
         } catch (err) {
-          console.error("Failed to fetch initial messages:", err);
           setError("Failed to load messages.");
         } finally {
           setIsLoading(false);
