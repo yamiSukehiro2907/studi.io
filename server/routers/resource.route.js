@@ -6,12 +6,15 @@ const {
   addResource,
   getAllResources,
   updateResource,
+  deleteResource,
 } = require("../controllers/resource.controller");
 
 router.post("/add", addResource);
 
 router.get("/", getAllResources);
 
-router.put("/update", updateResource);
+router.put("/:resourceId/update", updateResource);
+
+router.delete("/:resourceId", deleteResource);
 
 module.exports = router;
