@@ -29,7 +29,7 @@ router.get("/:id", getRoomInfo);
 
 router.post("/:id/join", validateRoom, joinPublicRoom);
 
-router.post(
+router.put(
   "/:id/update",
   validateRoom,
   upload.single("roomImage"),

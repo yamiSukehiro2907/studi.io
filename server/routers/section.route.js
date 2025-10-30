@@ -13,7 +13,7 @@ router.get("/", getSections);
 
 router.post("/create", addSection);
 
-router.post("/:sectionId/update"  , updateSection)
+router.put("/:sectionId/update"  , updateSection)
 
 router.use("/:sectionId", validateSection, resourceRoutes);
 

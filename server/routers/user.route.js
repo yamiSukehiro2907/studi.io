@@ -10,12 +10,13 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post("/update", authMiddleware, upload.single("profileImage"), updateUser);
-router.get("/profile", authMiddleware, getProfile);
-router.post("/change-password", changePassword);
-router.post(
+router.use(authMiddleware)
+
+router.put("/update", upload.single("profileImage"), updateUser);
+router.get("/profile", getProfile);
+router.put("/change-password", changePassword);
+router.put(
   "/change-password-with-current",
-  authMiddleware,
   changePasswordWithCurrent
 );
 module.exports = router;
