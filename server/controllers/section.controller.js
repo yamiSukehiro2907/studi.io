@@ -77,4 +77,21 @@ const updateSection = async (req, res) => {
   }
 };
 
-module.exports = { addSection, getSections, updateSection };
+const deleteSection = async (req, res) => {
+  try {
+    const sectionId = req.params.sectionId;
+    const room = req.room;
+    const section = room.resourceHub.find((st) => st._id.equals(sectionId));
+    if (!section) {
+      return res.status(404).json({ message: "Section not founf" });
+    }
+    room.resourceHub.pull(sectionId);
+    await room.save();
+    return res.status(200).json({ message: "Section deleted successfully!" });
+  } catch (error) {
+    console.error("Error deleting the resources: ", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { addSection, getSections, updateSection , deleteSection };
