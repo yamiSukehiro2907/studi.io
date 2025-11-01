@@ -1,11 +1,12 @@
 export interface User {
   _id: string;
-  username: string;
+  name: string;
   email: string;
-  name: string,
-  profileImage?: string;
+  username: string;
   bio?: string;
   isVerified: Boolean;
   deleted: Boolean;
   createdAt: string;
+  updatedAt: string;
+  profileImage?: string;
 }

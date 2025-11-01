@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addMessage } from "@/redux/slices/roomSlice";
 import { socket } from "@/config/socket";
 import type { RootState } from "@/redux/store";
-import type { Message } from "@/config/schema/Message";
 import toast from "react-hot-toast";
+import type { Message } from "@/config/schema/Message";
 
 export const useSocketMessages = () => {
   const dispatch = useDispatch();

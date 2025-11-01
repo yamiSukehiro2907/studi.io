@@ -9,7 +9,7 @@ const {
   deleteResource,
 } = require("../controllers/resource.controller");
 
-router.post("/add", addResource);
+router.post("/create", addResource);
 
 router.get("/", getAllResources);
 

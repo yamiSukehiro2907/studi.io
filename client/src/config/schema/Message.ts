@@ -1,13 +1,14 @@
 export interface Message {
   _id: string;
   content: string;
-  sender: {
-    _id?: string;
-    username?: string;
-    name?: string;
-    profileImage?: string;
-  } ; 
+  sender: Message_Sender;
   room: string;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Message_Sender {
+  _id: string;
+  name: string;
+  profileImage?: string;
 }

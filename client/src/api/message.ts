@@ -8,7 +8,6 @@ export const getMessagesOfRoom = async (roomId: string): Promise<Message[]> => {
     });
     return response.data.messages;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };

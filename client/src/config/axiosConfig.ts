@@ -3,7 +3,7 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from "axios";
 
-const API_BASE_URL = "https://studi-io-5w1z.onrender.com/";
+const API_BASE_URL = "http://localhost:8000/";
 
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

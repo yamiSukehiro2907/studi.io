@@ -1,4 +1,3 @@
-// SettingsPage.tsx
 import { logOut } from "@/api/auth";
 import { AccountModal } from "@/components/Settings/AccountModal";
 import { AppearanceModal } from "@/components/Settings/AppearanceModal";

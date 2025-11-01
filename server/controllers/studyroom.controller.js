@@ -44,8 +44,8 @@ const getAllRooms = async (req, res) => {
     const rooms = await StudyRoom.find({
       "members.user": userId,
     })
-      .populate("owner", "name profileImage")
-      .populate("members.user", "name profileImage")
+      .populate("owner", "name email profileImage")
+      .populate("members.user", "name email profileImage")
       .sort({ createdAt: -1 });
 
     return res.status(200).json(rooms);
@@ -64,8 +64,8 @@ const getPublicRoom = async (req, res) => {
     };
 
     const rooms = await StudyRoom.find(query)
-      .populate("owner", "name profileImage")
-      .populate("members.user", "name profileImage")
+      .populate("owner", "name email profileImage")
+      .populate("members.user", "name email profileImage")
       .sort({ createdAt: -1 });
     return res.status(200).json(rooms);
   } catch (error) {
@@ -180,8 +180,8 @@ const updateRoomInfo = async (req, res) => {
     await room.save();
 
     let updatedRoom = await StudyRoom.findById(roomId)
-      .populate("owner", "name profileImage")
-      .populate("members.user", "name profileImage");
+      .populate("owner", "name email profileImage")
+      .populate("members.user", "name email profileImage");
 
     return res.status(200).json(updatedRoom);
   } catch (error) {

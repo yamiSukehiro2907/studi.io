@@ -3,37 +3,43 @@ import { useSelector, useDispatch } from "react-redux";
 import MessageBubble from "./MessageBubble";
 import type { RootState } from "@/redux/store";
 import { getMessagesOfRoom } from "@/api/message";
-import type { Message } from "@/config/schema/Message";
-import { setInitialMessages } from "@/redux/slices/roomSlice";
+import { setMessages } from "@/redux/slices/roomSlice";
 import ChatInput from "./ChatInput";
+import type { Message } from "@/config/schema/Message";
 
 const EMPTY_MESSAGES: Message[] = [];
 
 const ChatPanel: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingInitial, setIsFetchingInitial] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const selectedRoom = useSelector(
     (state: RootState) => state.room.selectedRoom
   );
-  const messages: Message[] = useSelector((state: RootState) =>
-    selectedRoom
-      ? state.room.messages[selectedRoom._id] || EMPTY_MESSAGES
-      : EMPTY_MESSAGES
+
+  const messages: Message[] = useSelector(
+    (state: RootState) => selectedRoom?.messages || EMPTY_MESSAGES
   );
+
   const { userData } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     if (selectedRoom) {
-      const fetchInitialMessages = async () => {
-        setIsLoading(true);
+      const hasMessages =
+        selectedRoom.messages && selectedRoom.messages.length > 0;
+
+      if (!hasMessages) {
+        setIsFetchingInitial(true);
+      }
+
+      const fetchMessages = async () => {
         setError(null);
         try {
           const fetchedMessages = await getMessagesOfRoom(selectedRoom._id);
           dispatch(
-            setInitialMessages({
+            setMessages({
               roomId: selectedRoom._id,
               messages: fetchedMessages,
             })
@@ -41,20 +47,21 @@ const ChatPanel: React.FC = () => {
         } catch (err) {
           setError("Failed to load messages.");
         } finally {
-          setIsLoading(false);
+          setIsFetchingInitial(false);
         }
       };
-      fetchInitialMessages();
+
+      fetchMessages();
     }
-  }, [selectedRoom, dispatch]);
+  }, [selectedRoom?._id, dispatch]);
 
   useEffect(() => {
-    if (!isLoading && messages.length > 0) {
+    if (messages.length > 0) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, isLoading]);
+  }, [messages.length]);
 
-  if (!selectedRoom && !isLoading) {
+  if (!selectedRoom && !isFetchingInitial) {
     return (
       <div className="flex flex-col h-full text-emerald-400 bg-gray-900">
         <div className="flex-1 flex items-center justify-center">
@@ -73,24 +80,22 @@ const ChatPanel: React.FC = () => {
   return (
     <div className="flex flex-col h-full text-emerald-400 bg-gray-900">
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
-        {isLoading && (
+        {isFetchingInitial && messages.length === 0 && (
           <div className="flex items-center justify-center h-full">
             <span className="loading loading-spinner text-emerald-500"></span>
           </div>
         )}
-        {!isLoading && error && (
+        {!isFetchingInitial && error && messages.length === 0 && (
           <div className="flex items-center justify-center h-full text-emerald-600">
             <p>{error}</p>
           </div>
         )}
-        {!isLoading && !error && messages.length === 0 && (
+        {!isFetchingInitial && !error && messages.length === 0 && (
           <div className="flex items-center justify-center h-full text-emerald-400/50">
             <p>No messages yet. Start the conversation!</p>
           </div>
         )}
-        {!isLoading &&
-          !error &&
-          messages.length > 0 &&
+        {messages.length > 0 &&
           messages.map((msg) => {
             const isOwnMessage = msg.sender._id === userData?._id;
             const messageKey =
