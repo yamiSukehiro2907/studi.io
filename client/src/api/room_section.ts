@@ -1,17 +1,15 @@
-import api from "@/config/axiosConfig.ts";
+import api from "@/config/axiosConfig";
 import type { Section } from "@/config/schema/Section";
 
 export const createSection = async (
-  formData: FormData,
-  roomId: string
+  roomId: string,
+  title: string
 ): Promise<Section> => {
   try {
     const response = await api.post(
       `/rooms/${roomId}/sections/create`,
-      formData,
-      {
-        withCredentials: true,
-      }
+      { title },
+      { withCredentials: true }
     );
     return response.data;
   } catch (error) {
@@ -20,14 +18,14 @@ export const createSection = async (
 };
 
 export const updateSection = async (
-  formData: FormData,
   roomId: string,
-  sectionId: string
+  sectionId: string,
+  title: string
 ): Promise<Section> => {
   try {
     const response = await api.put(
-      `/rooms/${roomId}/sections/${sectionId}/update`,
-      formData,
+      `/rooms/${roomId}/sections/${sectionId}`,
+      { title },
       { withCredentials: true }
     );
     return response.data;
@@ -41,7 +39,7 @@ export const deleteSection = async (
   sectionId: string
 ): Promise<void> => {
   try {
-    await api.delete(`/rooms/${roomId}/sections/${sectionId}/update`, {
+    await api.delete(`/rooms/${roomId}/sections/${sectionId}`, {
       withCredentials: true,
     });
   } catch (error) {

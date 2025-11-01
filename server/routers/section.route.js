@@ -5,18 +5,17 @@ const {
   updateSection,
   deleteSection,
 } = require("../controllers/section.controller");
-const validateSection = require("../middleware/sectionMiddleware.js");
 const resourceRoutes = require("./resource.route");
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.get("/", getSections);
 
 router.post("/create", addSection);
 
-router.put("/:sectionId/update", updateSection);
+router.put("/:sectionId", updateSection);
 
 router.delete("/:sectionId", deleteSection);
 
-router.use("/:sectionId", validateSection, resourceRoutes);
+router.use("/:sectionId", resourceRoutes);
 
 module.exports = router;

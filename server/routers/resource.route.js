@@ -1,6 +1,6 @@
 const express = require("express");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 const {
   addResource,
@@ -9,11 +9,15 @@ const {
   deleteResource,
 } = require("../controllers/resource.controller");
 
+const validateSection = require("../middleware/sectionMiddleware");
+
+router.use(validateSection);
+
 router.post("/create", addResource);
 
 router.get("/", getAllResources);
 
-router.put("/:resourceId/update", updateResource);
+router.put("/:resourceId", updateResource);
 
 router.delete("/:resourceId", deleteResource);
 

@@ -1,8 +1,8 @@
 const StudyRoom = require("../models/studyRoom.model.js");
-const mongoose = require("mongoose");
 
 const addResource = async (req, res) => {
   try {
+    console.log(req.body)
     const room = req.room;
     const section = req.section;
     const { title, link } = req.body;
