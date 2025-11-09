@@ -11,4 +11,4 @@ const resourceSchema = new mongoose.Schema({
   },
 });
 
-module.exports = resourceSchema;
+module.exports = mongoose.model("Resource", resourceSchema);
