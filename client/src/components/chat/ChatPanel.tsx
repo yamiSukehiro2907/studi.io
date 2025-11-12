@@ -20,7 +20,7 @@ const ChatPanel: React.FC = () => {
   );
 
   const messages: Message[] = useSelector(
-    (state: RootState) => selectedRoom?.messages || EMPTY_MESSAGES
+    () => selectedRoom?.messages || EMPTY_MESSAGES
   );
 
   const { userData } = useSelector((state: RootState) => state.user);
@@ -44,7 +44,7 @@ const ChatPanel: React.FC = () => {
               messages: fetchedMessages,
             })
           );
-        } catch (err) {
+        } catch {
           setError("Failed to load messages.");
         } finally {
           setIsFetchingInitial(false);
@@ -53,7 +53,7 @@ const ChatPanel: React.FC = () => {
 
       fetchMessages();
     }
-  }, [selectedRoom?._id, dispatch]);
+  }, [selectedRoom, dispatch]);
 
   useEffect(() => {
     if (messages.length > 0) {
