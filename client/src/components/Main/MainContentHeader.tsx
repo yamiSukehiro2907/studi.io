@@ -13,7 +13,7 @@ export function MainContentHeader({
   setMainContentTab: (
     tab: "chat" | "info" | "whiteboard" | "resourceHub" | "settings"
   ) => void;
-  canEdit: boolean;
+  canEdit: Boolean;
 }) {
   const tabs = [
     { key: "chat", label: "Chat", icon: <MessageSquare className="size-4" /> },

@@ -1,5 +1,5 @@
 const express = require("express");
-const validate = require("../middleware/validation");
+const authMiddleware = require("../middleware/authMiddleware.js");
 const {
   createStudyRoom,
   getAllRooms,
@@ -10,26 +10,32 @@ const {
   deleteRoom,
 } = require("../controllers/studyroom.controller");
 const upload = require("../config/multer");
+const sectionRoutes = require("./section.route.js");
+const validateRoom = require("../middleware/roomMiddleware.js");
 
 const router = express.Router();
 
-router.post("/create", validate, createStudyRoom);
+router.use(authMiddleware);
 
-router.delete("/:id" , validate , deleteRoom)
+router.get("/public", getPublicRoom);
 
-router.get("/", validate, getAllRooms);
+router.post("/create", createStudyRoom);
 
-router.get("/public", validate, getPublicRoom);
+router.get("/", getAllRooms);
 
-router.get("/:id", validate, getRoomInfo);
+router.use("/:id/sections", validateRoom, sectionRoutes);
 
-router.post("/join/:id", validate, joinPublicRoom);
+router.get("/:id", getRoomInfo);
 
-router.post(
-  "/update/:id",
-  validate,
+router.post("/:id/join", validateRoom, joinPublicRoom);
+
+router.put(
+  "/:id/update",
+  validateRoom,
   upload.single("roomImage"),
   updateRoomInfo
 );
+
+router.delete("/:id", validateRoom, deleteRoom);
 
 module.exports = router;

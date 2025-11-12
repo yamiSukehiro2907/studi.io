@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { BookOpen } from "lucide-react";
 import type { StudyRoom } from "@/config/schema/StudyRoom";
 import { RoomInfoPanel } from "@/components/Room/RoomInfoPanel";
 import { WelcomePlaceholder } from "@/components/common/WelcomePlaceHolder";
@@ -9,6 +8,7 @@ import ChatPanel from "../chat/ChatPanel";
 import { MainContentHeader } from "./MainContentHeader";
 import Whiteboard from "../whiteboard/Whiteboard";
 import { useSocketMessages } from "@/hooks/useSocketMessages";
+import ResourceHubPanel from "../resourcehub/ResourceHubPanel";
 
 interface MainContentProps {
   selectedRoom: StudyRoom | null;
@@ -78,40 +78,12 @@ export function MainContent({
             <Whiteboard roomId={selectedRoom._id} />
           </div>
         )}
-        {mainContentTab === "resourceHub" && (
-          <Placeholder
-            icon={
-              <BookOpen className="mx-auto size-10 text-emerald-500 mb-3" />
-            }
-            title="Resource Hub"
-            description="All uploaded study materials and shared links will show up here."
-          />
-        )}
+        {mainContentTab === "resourceHub" && <ResourceHubPanel />}
         {mainContentTab === "settings" && canEdit && (
           <div className="p-6 bg-neutral-900 shadow-md rounded-xl border border-emerald-800/40">
             <EditRoomPanel room={selectedRoom} />
           </div>
         )}
-      </div>
-    </div>
-  );
-}
-
-function Placeholder({
-  icon,
-  title,
-  description,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="p-6 text-emerald-100 flex items-center justify-center h-full bg-neutral-950">
-      <div className="text-center max-w-md mx-auto">
-        {icon}
-        <h3 className="font-semibold text-lg mb-1 text-emerald-400">{title}</h3>
-        <p className="text-sm text-emerald-200/70">{description}</p>
       </div>
     </div>
   );

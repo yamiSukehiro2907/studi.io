@@ -6,16 +6,17 @@ const {
   changePassword,
   changePasswordWithCurrent,
 } = require("../controllers/user.controller");
-const validate = require("../middleware/validation");
+const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post("/update", validate, upload.single("profileImage"), updateUser);
-router.get("/profile", validate, getProfile);
-router.post("/change-password", changePassword);
-router.post(
+router.use(authMiddleware)
+
+router.put("/update", upload.single("profileImage"), updateUser);
+router.get("/profile", getProfile);
+router.put("/change-password", changePassword);
+router.put(
   "/change-password-with-current",
-  validate,
   changePasswordWithCurrent
 );
 module.exports = router;

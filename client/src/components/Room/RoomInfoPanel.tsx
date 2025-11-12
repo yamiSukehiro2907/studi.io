@@ -75,7 +75,7 @@ export const RoomInfoPanel = ({
 
             return (
               <li
-                key={member._id}
+                key={member.user._id}
                 className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
                   isCurrentUser
                     ? "bg-emerald-800/10 border-emerald-600/30"

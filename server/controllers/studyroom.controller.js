@@ -44,8 +44,8 @@ const getAllRooms = async (req, res) => {
     const rooms = await StudyRoom.find({
       "members.user": userId,
     })
-      .populate("owner", "name profileImage")
-      .populate("members.user", "name profileImage")
+      .populate("owner", "name email profileImage")
+      .populate("members.user", "name email profileImage")
       .sort({ createdAt: -1 });
 
     return res.status(200).json(rooms);
@@ -64,8 +64,8 @@ const getPublicRoom = async (req, res) => {
     };
 
     const rooms = await StudyRoom.find(query)
-      .populate("owner", "name profileImage")
-      .populate("members.user", "name profileImage")
+      .populate("owner", "name email profileImage")
+      .populate("members.user", "name email profileImage")
       .sort({ createdAt: -1 });
     return res.status(200).json(rooms);
   } catch (error) {
@@ -105,14 +105,9 @@ const getRoomInfo = async (req, res) => {
 
 const joinPublicRoom = async (req, res) => {
   try {
-    const roomId = req.params.id;
-    const userId = req.user._id;
+    const room = req.room;
+    const user = req.user;
 
-    const room = await StudyRoom.findById(roomId);
-
-    if (!room) {
-      return res.status(404).json({ message: "Room not found" });
-    }
     if (room.isPrivate) {
       return res
         .status(403)
@@ -120,7 +115,7 @@ const joinPublicRoom = async (req, res) => {
     }
 
     const alreadyMember = room.members.some((member) =>
-      member.user.equals(userId)
+      member.user.equals(user._id)
     );
 
     if (alreadyMember) {
@@ -132,7 +127,7 @@ const joinPublicRoom = async (req, res) => {
       });
     }
 
-    room.members.push({ user: userId, isAdmin: false });
+    room.members.push({ user: user._id, isAdmin: false });
     await room.save();
 
     await room.populate("owner", "name profileImage email");
@@ -153,7 +148,7 @@ const joinPublicRoom = async (req, res) => {
 
 const updateRoomInfo = async (req, res) => {
   try {
-    const roomId = req.params.id;
+    const room = req.room;
 
     const { name, description, isPrivate } = req.body;
 
@@ -162,13 +157,7 @@ const updateRoomInfo = async (req, res) => {
         .status(400)
         .json({ message: "At least one field is required" });
     }
-
-    const room = await StudyRoom.findById(roomId);
-
-    if (!room) {
-      return res.status(404).json({ message: "Room not found" });
-    }
-
+    
     if (name && room.name !== name) {
       room.name = name;
     }
@@ -191,8 +180,8 @@ const updateRoomInfo = async (req, res) => {
     await room.save();
 
     let updatedRoom = await StudyRoom.findById(roomId)
-      .populate("owner", "name profileImage")
-      .populate("members.user", "name profileImage");
+      .populate("owner", "name email profileImage")
+      .populate("members.user", "name email profileImage");
 
     return res.status(200).json(updatedRoom);
   } catch (error) {

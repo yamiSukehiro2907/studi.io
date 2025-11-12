@@ -1,6 +1,6 @@
-import type { Message } from "@/config/schema/Message";
 import React from "react";
 import { User } from "lucide-react";
+import type { Message } from "@/config/schema/Message";
 
 interface MessageBubbleProps {
   message: Message;
@@ -17,9 +17,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
     ? "bg-emerald-500 text-white px-4 py-2 max-w-xs break-words rounded-tl-xl rounded-tr-xl rounded-bl-xl rounded-br-md"
     : "bg-emerald-200 text-emerald-900 px-4 py-2 max-w-xs break-words rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-md";
 
-  const senderName = isOwnMessage
-    ? "You"
-    : message.sender?.name || message.sender?.username || "Unknown";
+  const senderName = isOwnMessage ? "You" : message.sender?.name || "Unknown";
 
   const time = new Date(message.createdAt || Date.now()).toLocaleTimeString(
     [],

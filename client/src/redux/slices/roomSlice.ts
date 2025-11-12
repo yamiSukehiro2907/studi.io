@@ -1,11 +1,12 @@
 import type { Message } from "@/config/schema/Message";
-import type { Member, StudyRoom } from "@/config/schema/StudyRoom";
+import type { Resource } from "@/config/schema/Resource";
+import type { Section } from "@/config/schema/Section";
+import type { StudyRoom } from "@/config/schema/StudyRoom";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface RoomState {
   rooms: StudyRoom[];
   selectedRoom: StudyRoom | null;
-  messages: { [roomId: string]: Message[] };
   isLoading: boolean;
   error: string | null;
 }
@@ -13,7 +14,6 @@ interface RoomState {
 const initialState: RoomState = {
   rooms: [],
   selectedRoom: null,
-  messages: {},
   isLoading: false,
   error: null,
 };
@@ -50,7 +50,6 @@ const roomSlice = createSlice({
       if (state.selectedRoom?._id === action.payload) {
         state.selectedRoom = null;
       }
-      delete state.messages[action.payload];
       state.error = null;
     },
 
@@ -58,60 +57,20 @@ const roomSlice = createSlice({
       state.selectedRoom = action.payload;
     },
 
-    addMemberToRoom: (
-      state,
-      action: PayloadAction<{ roomId: string; member: Member }>
-    ) => {
-      const room = state.rooms.find((r) => r._id === action.payload.roomId);
-      if (room) {
-        room.members.push(action.payload.member);
-      }
-      if (state.selectedRoom?._id === action.payload.roomId) {
-        state.selectedRoom.members.push(action.payload.member);
-      }
-    },
-
-    removeMemberFromRoom: (
-      state,
-      action: PayloadAction<{ roomId: string; userId: string }>
-    ) => {
-      const room = state.rooms.find((r) => r._id === action.payload.roomId);
-      if (room) {
-        room.members = room.members.filter(
-          (m) => m.user._id !== action.payload.userId
-        );
-      }
-      if (state.selectedRoom?._id === action.payload.roomId) {
-        state.selectedRoom.members = state.selectedRoom.members.filter(
-          (m) => m.user._id !== action.payload.userId
-        );
-      }
-    },
-    setInitialMessages(
-      state,
-      action: PayloadAction<{ roomId: string; messages: Message[] }>
-    ) {
-      state.messages[action.payload.roomId] = action.payload.messages;
-    },
-
-    updateWhiteboardState: (
-      state,
-      action: PayloadAction<{ roomId: string; whiteboardState: string }>
-    ) => {
-      const room = state.rooms.find((r) => r._id === action.payload.roomId);
-      if (room) {
-        room.whiteboardState = action.payload.whiteboardState;
-      }
-      if (state.selectedRoom?._id === action.payload.roomId) {
-        state.selectedRoom.whiteboardState = action.payload.whiteboardState;
-      }
-    },
-
     setMessages: (
       state,
       action: PayloadAction<{ roomId: string; messages: Message[] }>
     ) => {
-      state.messages[action.payload.roomId] = action.payload.messages;
+      const { roomId, messages } = action.payload;
+
+      const room = state.rooms.find((r) => r._id === roomId);
+      if (room) {
+        room.messages = messages;
+      }
+
+      if (state.selectedRoom?._id === roomId) {
+        state.selectedRoom.messages = messages;
+      }
     },
 
     addMessage: (
@@ -121,45 +80,67 @@ const roomSlice = createSlice({
       const { message, currentUserId } = action.payload;
       const roomId = message.room;
 
-      if (!state.messages[roomId]) {
-        state.messages[roomId] = [];
-      }
-
-      if (currentUserId && currentUserId === message.sender._id) {
-        const messages = state.messages[roomId];
-
-        const tempIndex = messages.findIndex(
-          (m) =>
-            m._id?.startsWith("temp-") &&
-            m.sender._id === message.sender._id &&
-            m.content === message.content
-        );
-
-        if (tempIndex !== -1) {
-          messages[tempIndex] = message;
-          return;
+      const updateRoomMessages = (room: StudyRoom) => {
+        if (!room.messages) {
+          room.messages = [];
         }
+
+        if (currentUserId && currentUserId === message.sender._id) {
+          const tempIndex = room.messages.findIndex(
+            (m) =>
+              m._id?.startsWith("temp-") &&
+              m.sender._id === message.sender._id &&
+              m.content === message.content
+          );
+
+          if (tempIndex !== -1) {
+            room.messages[tempIndex] = message;
+            return;
+          }
+        }
+
+        const existingIndex = room.messages.findIndex(
+          (m) => m._id === message._id
+        );
+        if (existingIndex === -1) {
+          room.messages.push(message);
+        }
+      };
+
+      const room = state.rooms.find((r) => r._id === roomId);
+      if (room) {
+        updateRoomMessages(room);
       }
 
-      state.messages[roomId].push(message);
+      if (state.selectedRoom?._id === roomId) {
+        updateRoomMessages(state.selectedRoom);
+      }
     },
 
     updateMessage: (
       state,
-      action: PayloadAction<{
-        roomId: string;
-        messageId: string;
-        content: string;
-      }>
+      action: PayloadAction<{ roomId: string; message: Message }>
     ) => {
-      const { roomId, messageId, content } = action.payload;
-      const messages = state.messages[roomId];
-      if (messages) {
-        const index = messages.findIndex((m) => m._id === messageId);
-        if (index !== -1) {
-          messages[index].content = content;
-          messages[index].updatedAt = new Date().toISOString();
+      const { roomId, message } = action.payload;
+
+      const updateRoomMessage = (room: StudyRoom) => {
+        if (!room.messages) return;
+
+        const messageIndex = room.messages.findIndex(
+          (m) => m._id === message._id
+        );
+        if (messageIndex !== -1) {
+          room.messages[messageIndex] = message;
         }
+      };
+
+      const room = state.rooms.find((r) => r._id === roomId);
+      if (room) {
+        updateRoomMessage(room);
+      }
+
+      if (state.selectedRoom?._id === roomId) {
+        updateRoomMessage(state.selectedRoom);
       }
     },
 
@@ -168,14 +149,217 @@ const roomSlice = createSlice({
       action: PayloadAction<{ roomId: string; messageId: string }>
     ) => {
       const { roomId, messageId } = action.payload;
-      const messages = state.messages[roomId];
-      if (messages) {
-        state.messages[roomId] = messages.filter((m) => m._id !== messageId);
+
+      const deleteRoomMessage = (room: StudyRoom) => {
+        if (!room.messages) return;
+        room.messages = room.messages.filter((m) => m._id !== messageId);
+      };
+
+      const room = state.rooms.find((r) => r._id === roomId);
+      if (room) {
+        deleteRoomMessage(room);
+      }
+
+      if (state.selectedRoom?._id === roomId) {
+        deleteRoomMessage(state.selectedRoom);
       }
     },
 
-    clearMessages: (state, action: PayloadAction<string>) => {
-      delete state.messages[action.payload];
+    addSection: (
+      state,
+      action: PayloadAction<{ roomId: string; section: Section }>
+    ) => {
+      const { roomId, section } = action.payload;
+
+      const room = state.rooms.find((r) => r._id === roomId);
+      if (room) {
+        if (!room.resourceHub) {
+          room.resourceHub = [];
+        }
+        room.resourceHub.push(section);
+      }
+
+      if (state.selectedRoom?._id === roomId) {
+        if (!state.selectedRoom.resourceHub) {
+          state.selectedRoom.resourceHub = [];
+        }
+        state.selectedRoom.resourceHub.push(section);
+      }
+
+      state.error = null;
+    },
+
+    updateSection: (
+      state,
+      action: PayloadAction<{ roomId: string; section: Section }>
+    ) => {
+      const { roomId, section } = action.payload;
+
+      const room = state.rooms.find((r) => r._id === roomId);
+      if (room && room.resourceHub) {
+        const sectionIndex = room.resourceHub.findIndex(
+          (s) => s._id === section._id
+        );
+        if (sectionIndex !== -1) {
+          room.resourceHub[sectionIndex] = section;
+        }
+      }
+
+      if (
+        state.selectedRoom?._id === roomId &&
+        state.selectedRoom.resourceHub
+      ) {
+        const sectionIndex = state.selectedRoom.resourceHub.findIndex(
+          (s) => s._id === section._id
+        );
+        if (sectionIndex !== -1) {
+          state.selectedRoom.resourceHub[sectionIndex] = section;
+        }
+      }
+
+      state.error = null;
+    },
+
+    deleteSection: (
+      state,
+      action: PayloadAction<{ roomId: string; sectionId: string }>
+    ) => {
+      const { roomId, sectionId } = action.payload;
+
+      const room = state.rooms.find((r) => r._id === roomId);
+      if (room && room.resourceHub) {
+        room.resourceHub = room.resourceHub.filter((s) => s._id !== sectionId);
+      }
+
+      if (
+        state.selectedRoom?._id === roomId &&
+        state.selectedRoom.resourceHub
+      ) {
+        state.selectedRoom.resourceHub = state.selectedRoom.resourceHub.filter(
+          (s) => s._id !== sectionId
+        );
+      }
+
+      state.error = null;
+    },
+
+    addResource: (
+      state,
+      action: PayloadAction<{
+        roomId: string;
+        sectionId: string;
+        resource: Resource;
+      }>
+    ) => {
+      const { roomId, sectionId, resource } = action.payload;
+
+      const room = state.rooms.find((r) => r._id === roomId);
+      if (room && room.resourceHub) {
+        const section = room.resourceHub.find((s) => s._id === sectionId);
+        if (section) {
+          if (!Array.isArray(section.resources)) {
+            section.resources = [];
+          }
+          section.resources.push(resource);
+        }
+      }
+
+      if (
+        state.selectedRoom?._id === roomId &&
+        state.selectedRoom.resourceHub
+      ) {
+        const section = state.selectedRoom.resourceHub.find(
+          (s) => s._id === sectionId
+        );
+        if (section) {
+          if (!Array.isArray(section.resources)) {
+            section.resources = [];
+          }
+          section.resources.push(resource);
+        }
+      }
+
+      state.error = null;
+    },
+
+    updateResource: (
+      state,
+      action: PayloadAction<{
+        roomId: string;
+        sectionId: string;
+        resource: Resource;
+      }>
+    ) => {
+      const { roomId, sectionId, resource } = action.payload;
+
+      const room = state.rooms.find((r) => r._id === roomId);
+      if (room && room.resourceHub) {
+        const section = room.resourceHub.find((s) => s._id === sectionId);
+        if (section && Array.isArray(section.resources)) {
+          const resourceIndex = section.resources.findIndex(
+            (r) => r._id === resource._id
+          );
+          if (resourceIndex !== -1) {
+            section.resources[resourceIndex] = resource;
+          }
+        }
+      }
+
+      if (
+        state.selectedRoom?._id === roomId &&
+        state.selectedRoom.resourceHub
+      ) {
+        const section = state.selectedRoom.resourceHub.find(
+          (s) => s._id === sectionId
+        );
+        if (section && Array.isArray(section.resources)) {
+          const resourceIndex = section.resources.findIndex(
+            (r) => r._id === resource._id
+          );
+          if (resourceIndex !== -1) {
+            section.resources[resourceIndex] = resource;
+          }
+        }
+      }
+
+      state.error = null;
+    },
+
+    deleteResource: (
+      state,
+      action: PayloadAction<{
+        roomId: string;
+        sectionId: string;
+        resourceId: string;
+      }>
+    ) => {
+      const { roomId, sectionId, resourceId } = action.payload;
+
+      const room = state.rooms.find((r) => r._id === roomId);
+      if (room && room.resourceHub) {
+        const section = room.resourceHub.find((s) => s._id === sectionId);
+        if (section && Array.isArray(section.resources)) {
+          section.resources = section.resources.filter(
+            (r) => r._id !== resourceId
+          );
+        }
+      }
+
+      if (
+        state.selectedRoom?._id === roomId &&
+        state.selectedRoom.resourceHub
+      ) {
+        const section = state.selectedRoom.resourceHub.find(
+          (s) => s._id === sectionId
+        );
+        if (section && Array.isArray(section.resources)) {
+          section.resources = section.resources.filter(
+            (r) => r._id !== resourceId
+          );
+        }
+      }
+
+      state.error = null;
     },
 
     setLoading: (state, action: PayloadAction<boolean>) => {
@@ -190,14 +374,6 @@ const roomSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
-
-    clearRooms: (state) => {
-      state.rooms = [];
-      state.selectedRoom = null;
-      state.messages = {};
-      state.error = null;
-      state.isLoading = false;
-    },
   },
 });
 
@@ -207,19 +383,19 @@ export const {
   updateRoom,
   deleteRoom,
   setSelectedRoom,
-  addMemberToRoom,
-  removeMemberFromRoom,
-  updateWhiteboardState,
   setMessages,
   addMessage,
-  setInitialMessages,
   updateMessage,
   deleteMessage,
-  clearMessages,
+  addSection,
+  updateSection,
+  deleteSection,
+  addResource,
+  updateResource,
+  deleteResource,
   setLoading,
   setError,
   clearError,
-  clearRooms,
 } = roomSlice.actions;
 
 export default roomSlice.reducer;

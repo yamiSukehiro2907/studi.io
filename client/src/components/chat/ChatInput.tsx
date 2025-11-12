@@ -29,6 +29,7 @@ const ChatInput: React.FC<any> = () => {
   }, [message]);
 
   const handleSubmit = (e: React.FormEvent) => {
+    if (!userData) return;
     e.preventDefault();
     const trimmedMessage = message.trim();
     if (!trimmedMessage || !selectedRoom) return;
@@ -38,10 +39,9 @@ const ChatInput: React.FC<any> = () => {
       content: trimmedMessage,
       room: selectedRoom._id,
       sender: {
-        _id: userData?._id,
-        username: userData?.username,
+        _id: userData._id,
         name: userData?.name,
-        profileImage: userData?.profileImage,
+        profileImage: userData.profileImage,
       },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

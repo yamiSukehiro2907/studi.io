@@ -1,33 +1,17 @@
-export interface Member {
-  user: {
-    _id: string;
-    name: string;
-    profileImage?: string;
-    email: string;
-  };
-  isAdmin: boolean;
-  _id?: string;
-}
-
-export interface Section {
-  title: string;
-  resources: any[];
-  _id?: string;
-}
+import type { Member, RoomMember } from "./Member";
+import type { Message } from "./Message";
+import type { Section } from "./Section";
 
 export interface StudyRoom {
   _id: string;
   name: string;
-  description?: string;
+  description: string;
   isPrivate: boolean;
-  owner: {
-    _id: string;
-    name: string;
-    profileImage?: string;
-  };
-  members: Member[];
   roomImage: string;
-  whiteboardState?: string;
+  owner: Member;
+  members: RoomMember[];
+  whiteBoardState: string;
+  messages?: Message[];
   resourceHub: Section[];
   createdAt: string;
   updatedAt: string;

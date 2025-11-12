@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 require("dotenv").config();
 
-const validate = async (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   const token = req.cookies?.accessToken;
 
   if (!token) {
@@ -27,4 +27,4 @@ const validate = async (req, res, next) => {
   });
 };
 
-module.exports = validate;
+module.exports = authMiddleware;
