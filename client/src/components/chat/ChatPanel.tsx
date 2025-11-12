@@ -19,41 +19,28 @@ const ChatPanel: React.FC = () => {
     (state: RootState) => state.room.selectedRoom
   );
 
-  const messages: Message[] = useSelector(
-    () => selectedRoom?.messages || EMPTY_MESSAGES
-  );
-
+  const messages: Message[] = selectedRoom?.messages || EMPTY_MESSAGES;
   const { userData } = useSelector((state: RootState) => state.user);
+  const roomId = selectedRoom?._id;
 
   useEffect(() => {
-    if (selectedRoom) {
-      const hasMessages =
-        selectedRoom.messages && selectedRoom.messages.length > 0;
+    if (!roomId || selectedRoom?.messages?.length) return;
 
-      if (!hasMessages) {
-        setIsFetchingInitial(true);
+    const fetchMessages = async () => {
+      setError(null);
+      setIsFetchingInitial(true);
+      try {
+        const fetchedMessages = await getMessagesOfRoom(roomId);
+        dispatch(setMessages({ roomId, messages: fetchedMessages }));
+      } catch {
+        setError("Failed to load messages.");
+      } finally {
+        setIsFetchingInitial(false);
       }
+    };
 
-      const fetchMessages = async () => {
-        setError(null);
-        try {
-          const fetchedMessages = await getMessagesOfRoom(selectedRoom._id);
-          dispatch(
-            setMessages({
-              roomId: selectedRoom._id,
-              messages: fetchedMessages,
-            })
-          );
-        } catch {
-          setError("Failed to load messages.");
-        } finally {
-          setIsFetchingInitial(false);
-        }
-      };
-
-      fetchMessages();
-    }
-  }, [selectedRoom, dispatch]);
+    fetchMessages();
+  }, [roomId, selectedRoom?.messages?.length, dispatch]);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -100,7 +87,6 @@ const ChatPanel: React.FC = () => {
             const isOwnMessage = msg.sender._id === userData?._id;
             const messageKey =
               msg._id || `temp-${msg.createdAt}-${msg.sender._id}`;
-
             return (
               <MessageBubble
                 key={messageKey}
@@ -111,7 +97,6 @@ const ChatPanel: React.FC = () => {
           })}
         <div ref={messagesEndRef} />
       </div>
-
       <ChatInput />
     </div>
   );
