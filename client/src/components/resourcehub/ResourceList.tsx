@@ -5,7 +5,7 @@ import ResourceItem from "./ResourceItem";
 
 interface ResourceListProps {
   resources: Resource[];
-  canEdit: Boolean;
+  canEdit: boolean;
   onEdit: (resource: Resource) => void;
   onDelete: (resourceId: string) => void;
 }

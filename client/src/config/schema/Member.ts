@@ -7,5 +7,5 @@ export interface Member {
 
 export interface RoomMember {
   user: Member;
-  isAdmin: Boolean;
+  isAdmin: boolean;
 }

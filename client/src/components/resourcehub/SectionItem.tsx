@@ -6,7 +6,7 @@ import ResourceList from "./ResourceList";
 
 interface SectionItemProps {
   section: Section;
-  canEdit: Boolean;
+  canEdit: boolean;
   onEdit: () => void;
   onDelete: () => void;
   onAddResource: () => void;

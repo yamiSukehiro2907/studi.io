@@ -6,7 +6,7 @@ import SectionItem from "./SectionItem";
 
 interface SectionListProps {
   sections: Section[];
-  canEdit: Boolean;
+  canEdit: boolean;
   onEditSection: (section: Section) => void;
   onDeleteSection: (sectionId: string) => void;
   onAddResource: (sectionId: string) => void;

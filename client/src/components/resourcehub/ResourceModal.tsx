@@ -31,7 +31,10 @@ const ResourceModal: React.FC<ResourceModalProps> = ({
   useEffect(() => {
     if (initialState?.type === "edit-section" && initialState.section) {
       setTitle(initialState.section.title);
-    } else if (initialState?.type === "edit-resource" && initialState.resource) {
+    } else if (
+      initialState?.type === "edit-resource" &&
+      initialState.resource
+    ) {
       setTitle(initialState.resource.title);
       setLink(initialState.resource.link);
     }
@@ -67,8 +70,8 @@ const ResourceModal: React.FC<ResourceModalProps> = ({
 
   const isValidUrl = (urlString: string) => {
     try {
-      const url = new URL(urlString);
-      return url.protocol === "http:" || url.protocol === "https:";
+      new URL(urlString.startsWith("http") ? urlString : `http://${urlString}`);
+      return true;
     } catch {
       return false;
     }
@@ -83,7 +86,10 @@ const ResourceModal: React.FC<ResourceModalProps> = ({
       onAddSection(title.trim());
     } else if (initialState?.type === "edit-section" && initialState.section) {
       onUpdateSection(initialState.section._id, title.trim());
-    } else if (initialState?.type === "add-resource" && initialState.sectionId) {
+    } else if (
+      initialState?.type === "add-resource" &&
+      initialState.sectionId
+    ) {
       onAddResource(initialState.sectionId, title.trim(), link.trim());
     } else if (
       initialState?.type === "edit-resource" &&
@@ -141,7 +147,9 @@ const ResourceModal: React.FC<ResourceModalProps> = ({
               {getModalIcon()}
             </div>
             <div className="flex-1">
-              <h3 className="text-2xl font-bold text-white">{getModalTitle()}</h3>
+              <h3 className="text-2xl font-bold text-white">
+                {getModalTitle()}
+              </h3>
               <p className="text-emerald-100 text-sm mt-0.5">
                 {isResourceModal
                   ? "Enter the resource details below"
@@ -174,7 +182,7 @@ const ResourceModal: React.FC<ResourceModalProps> = ({
               }}
               placeholder={
                 isResourceModal
-                  ? "e.g., React Documentation"
+                  ? "e.g., Documentation"
                   : "e.g., Programming Resources"
               }
               className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border-2 ${
