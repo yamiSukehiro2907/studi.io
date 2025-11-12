@@ -61,7 +61,7 @@ export const updateRoomInfo = async (
   roomId: string
 ): Promise<StudyRoom> => {
   try {
-    const response = await api.post(`/rooms/${roomId}/update`, formData, {
+    const response = await api.put(`/rooms/${roomId}/update`, formData, {
       withCredentials: true,
     });
     return response.data;
