@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import api from "@/config/axiosConfig";
 import type { Resource } from "@/config/schema/Resource";
 

@@ -14,7 +14,7 @@ export const sendEmailOTPVerification = async (
 export const verifyOTP = async (
   email: string,
   otp: string
-): Promise<Object> => {
+): Promise<object> => {
   try {
     const response = await api.post("/otp/verify-otp", {
       email,

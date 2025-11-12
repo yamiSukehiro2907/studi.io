@@ -13,7 +13,7 @@ export const fetchCurrentUser = async (): Promise<User> => {
 
 export const updateUser = async (formData: FormData): Promise<User> => {
   try {
-    const response = await api.post("/user/update", formData, {
+    const response = await api.put("/user/update", formData, {
       withCredentials: true,
     });
     return response.data;
@@ -28,7 +28,7 @@ export const changePassword = async (
   password: string
 ): Promise<void> => {
   try {
-    await api.post("/user/change-password", {
+    await api.put("/user/change-password", {
       email: email,
       password: password,
     });
@@ -43,7 +43,7 @@ export const changePassword2 = async (
   newPassword: string
 ): Promise<void> => {
   try {
-    await api.post("/user/change-password-with-current", {
+    await api.put("/user/change-password-with-current", {
       currentPassword: currentPassword,
       newPassword: newPassword,
     });
