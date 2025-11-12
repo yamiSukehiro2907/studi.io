@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import api from "@/config/axiosConfig";
 import type { Section } from "@/config/schema/Section";
 

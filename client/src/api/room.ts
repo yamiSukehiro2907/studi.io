@@ -30,7 +30,7 @@ export const getUserRooms = async (): Promise<StudyRoom[]> => {
 
 export const joinPublicRoom = async (roomId: string): Promise<StudyRoom> => {
   try {
-    const response = await api.post(`/rooms/join/${roomId}`, {
+    const response = await api.post(`/rooms/${roomId}/join`, {
       withCredentials: true,
     });
 
@@ -61,7 +61,7 @@ export const updateRoomInfo = async (
   roomId: string
 ): Promise<StudyRoom> => {
   try {
-    const response = await api.post(`/rooms/update/${roomId}`, formData, {
+    const response = await api.post(`/rooms/${roomId}/update`, formData, {
       withCredentials: true,
     });
     return response.data;
