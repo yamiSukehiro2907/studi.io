@@ -1,28 +1,29 @@
 import api from "@/config/axiosConfig";
+import type {ApiResponse} from "@/api/ApiResponse.ts";
 
 export const sendEmailOTPVerification = async (
-  email: string
+    email: string
 ): Promise<void> => {
-  try {
-    await api.post("/otp/send-email-otp", { email: email });
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+    try {
+        await api.post("/otp/send-otp", {email: email});
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
 };
 
 export const verifyOTP = async (
-  email: string,
-  otp: string
+    email: string,
+    otp: string
 ): Promise<object> => {
-  try {
-    const response = await api.post("/otp/verify-otp", {
-      email,
-      otp,
-    });
-    return response;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+    try {
+        const response: ApiResponse = await api.post("/otp/verify-otp", {
+            email,
+            otp,
+        });
+        return response.data.success;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
 };

@@ -22,6 +22,7 @@ import {
   deleteResource,
   updateResource,
 } from "@/api/room_resource";
+import type {ModalState} from "@/components/resourcehub/ResourceModalProps.ts";
 
 type ConfirmModalState = {
   isOpen: boolean;
@@ -33,7 +34,7 @@ type ConfirmModalState = {
 export const useResourceHandlers = (
   selectedRoom: StudyRoom | null,
   dispatch: ReduxDispatch,
-  setModalState: (state: any) => void,
+  setModalState: (state: ModalState) => void,
   setConfirmModal: Dispatch<SetStateAction<ConfirmModalState>>
 ) => {
   const handleAddSection = async (title: string) => {
